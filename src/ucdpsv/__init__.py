@@ -25,7 +25,7 @@
 """Unified Chip Design Platform - SystemVerilog."""
 
 from collections.abc import Iterable, Iterator
-from typing import Literal
+from typing import ClassVar, Literal
 
 import ucdp as u
 from aligntext import Align
@@ -73,6 +73,9 @@ class SvExprResolver(u.ExprResolver):
     "18'sh3FFFB"
     """
 
+    ff_dly: str = ""
+    _opremap: ClassVar[dict[str, str]] = {"//": "/"}
+
     @staticmethod
     def _get_rail_value(value: int) -> str:
         return f"1'b{value}"
@@ -81,17 +84,36 @@ class SvExprResolver(u.ExprResolver):
     def _get_bit_value(value: int) -> str:
         return f"1'b{value}"
 
-    @staticmethod
-    def _get_uint_value(value: int, width: int) -> str:
-        hexstr = f"{value:X}".zfill((width + 3) // 4)
-        return f"{width}'h{hexstr}"
+    def _get_uint_value(self, value: int, width: int | u.Expr) -> str:
+        if isinstance(width, int):
+            hexstr = f"{value:X}".zfill((width + 3) // 4)
+            return f"{width}'h{hexstr}"
 
-    @staticmethod
-    def _get_sint_value(value: int, width: int) -> str:
-        wrap = 1 << width
-        value = (value + wrap) % wrap
-        hexstr = f"{value:X}".zfill((width + 3) // 4)
-        return f"{width}'sh{hexstr}"
+        # parameterized width
+        width = self.resolve(width)
+        if value != 0:
+            # This is not the best, but all we can do - or?
+            return f"{width}'d{value}"
+
+        return f"{{{width} {{1'b0}}}}"
+
+    def _get_sint_value(self, value: int, width: int | u.Expr) -> str:
+        if isinstance(width, int):
+            wrap = 1 << width
+            value = (value + wrap) % wrap
+            hexstr = f"{value:X}".zfill((width + 3) // 4)
+            return f"{width}'sh{hexstr}"
+
+        # parameterized width
+        width = self.resolve(width)
+
+        # This is not the best, but all we can do - or?
+        if value > 0:
+            return f"{width}'d{value}"
+        if value < 0:
+            return f"-({width}'d{-value})"
+
+        return f"{{{width} {{1'sb0}}}}"
 
     @staticmethod
     def _get_integer_value(value: int) -> str:
@@ -135,7 +157,9 @@ class SvExprResolver(u.ExprResolver):
         self, ports: u.Idents, is_last: bool = True, indent: int = 0, wirenames: u.Names | None = None
     ) -> Align:
         """Return `Align` With Port Declarations."""
-        return self._get_signaldecls(ports.iter(), ",", is_last=is_last, indent=indent, wirenames=wirenames)
+        return self._get_signaldecls(
+            ports.iter(), ",", is_last=is_last, indent=indent, wirenames=wirenames, is4ports=True
+        )
 
     def get_signaldecls(self, signals: u.Idents, indent: int = 0, wirenames: u.Names | None = None) -> Align:
         """Return `Align` With Signal Declarations."""
@@ -152,6 +176,7 @@ class SvExprResolver(u.ExprResolver):
         is_last: bool,
         indent: int,
         wirenames: u.Names | None = None,
+        is4ports: bool = False,
     ) -> Align:
         align = Align(rtrim=True, strip_empty_cols=True)
         pre = " " * indent
@@ -165,12 +190,15 @@ class SvExprResolver(u.ExprResolver):
             else:
                 name = f"{name}{svsep}"
             svcomment = _get_comment(ident.doc.comment)
-            dirkeyword = DIRKEYWORDS.get(ident.direction)
-            if isinstance(ident.type_, u.BaseScalarType):
+            if isinstance(ident.type_, (u.BaseScalarType, u.ArrayType)):
                 logickeyword = "wire" if matchs(ident.name, wirenames) else LOGICKEYWORDS.get(ident.direction)
             else:
                 logickeyword = ""
-            align.add_row((dirkeyword, logickeyword, *svdecl, name, svdims, svcomment))
+            if is4ports:
+                dirkeyword = DIRKEYWORDS.get(ident.direction)
+                align.add_row((dirkeyword, logickeyword, *svdecl, name, svdims, svcomment))
+            else:
+                align.add_row((logickeyword, *svdecl, name, svdims, svcomment))
         return align
 
     def get_instparams(self, mod: u.BaseMod, is_last: bool = True, indent: int = 0) -> Align:
@@ -282,13 +310,13 @@ class SvExprResolver(u.ExprResolver):
             return None
 
         if isinstance(type_, u.IntegerType):
-            return "", "integer"
+            return "integer", ""
 
         if isinstance(type_, u.BoolType):
-            return "", "bool"
+            return "bool", ""
 
         if isinstance(type_, u.StringType):
-            return "", "string"
+            return "string", ""
 
         raise ValueError(type_)
 
@@ -344,6 +372,12 @@ class SvExprResolver(u.ExprResolver):
             return self._resolve_value(type_, value=type_.max_)
         return f"{op}{name}"
 
+    def _get_array_value(self, itemvalue: str, slice_: u.Slice) -> str:
+        width = slice_.width
+        if not isinstance(width, int):
+            width = self._resolve(width)
+        return f"'{{{width}{{{itemvalue}}}}}"
+
 
 def _get_comment(comment, level=0, pre="") -> str:
     """Return Systemverilog Comment."""
@@ -389,6 +423,8 @@ def _add_declcomment(align: Align, ident: u.Ident | u.Assign, pendlevel, svdecl,
     return None
 
 
-def get_resolver(mod: u.BaseMod) -> SvExprResolver:
+def get_resolver(mod: u.BaseMod, inst: u.BaseMod | None = None) -> SvExprResolver:
     """Get SvExprResolver for `mod`."""
+    if inst is not None:
+        return SvExprResolver(namespace=mod.namespace, remap=inst.params)
     return SvExprResolver(namespace=mod.namespace)

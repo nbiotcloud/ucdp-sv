@@ -49,25 +49,38 @@ class TopMod(u.AMod):
 
     def _build(self) -> None:
         parser = self.parser
+
+        param_p = self.add_param(u.IntegerType(default=10), "param_p")
+        width_p = self.add_param(u.IntegerType(default=parser.log2(param_p + 1)), "width_p")
+        default_p = self.add_param(u.UintType(param_p), "default_p")
+
         self.add_port(u.ClkRstAnType(), "main_i")
         self.add_port(IoType(), "intf_i", route="create(u_core/intf_i)")
         self.add_port(BusType(), "bus_i")
 
-        width_p = self.add_param(u.IntegerType(default=10), "width_p")
-        self.add_param(u.IntegerType(default=width_p // 2), "sub_p")
-        self.add_const(u.IntegerType(default=parser.log2(width_p + 1)), "cntwidth_p")
+        self.add_port(u.UintType(param_p), "data_i")
+        self.add_port(u.UintType(width_p), "cnt_o")
+
+        self.add_const(u.UintType(param_p, default=default_p // 2), "const_c")
 
         clkgate = ClkGateMod(self, "u_clk_gate")
         clkgate.con("clk_i", "main_clk_i")
         clkgate.con("clk_o", "create(clk_s)")
 
-        core = TopCoreMod(self, "u_core", paramdict={"width_p": width_p})
-        width_p = core.add_param(width_p)
-        core.add_param(u.IntegerType(default=4), "depth_p")
+        core = TopCoreMod(self, "u_core", paramdict={"width_p": width_p, "param_p": param_p})
+        param_p = core.add_param(u.IntegerType(default=10), "param_p")
+        width_p = core.add_param(u.IntegerType(default=8), "width_p")
+        core.add_param(u.SintType(8, default=-3), "other_p")
 
         core.add_port(u.ClkRstAnType(), "main_i")
+        core.add_port(u.UintType(param_p), "p_i")
+        core.add_port(u.UintType(param_p), "p_o")
         core.add_port(u.UintType(width_p), "data_i")
         core.add_port(u.UintType(width_p), "data_o")
+
+        core.add_port(u.ArrayType(u.UintType(8), param_p), "array_i")
+        core.add_port(u.ArrayType(u.UintType(8), 8), "array_open_i")
+        core.con("array_i", "create(array_s)")
 
         core.con("main_clk_i", "clk_s")
         core.con("main_rst_an_i", "main_rst_an_i")

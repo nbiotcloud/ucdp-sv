@@ -170,7 +170,7 @@ ${inst(modinst, indent)}
   inst = mod.get_inst(inst)
   pre = " " * indent
   comment = inst.doc.comment or f"{inst.libname}.{inst.modname}: {inst.name}"
-  rslvr = usv.get_resolver(mod)
+  rslvr = usv.get_resolver(mod, inst=inst)
   params = rslvr.get_instparams(inst, indent=indent+2)
   ports = rslvr.get_instcons(mod.get_instcons(inst), indent=indent+2)
 %>\
@@ -239,10 +239,10 @@ ${pre}// ------------------------------------------------------
 
 ${pre}always_ff @(posedge ${flipflop.clk.name} or negedge ${flipflop.rst_an.name}) begin: proc_seq_${idx}
 ${pre}  if (${flipflop.rst_an.name} == 1'b0) begin
-${rslvr.get_defaults(flipflop.defaults(), indent=indent+4, oper="<= #1").get()}
+${rslvr.get_defaults(flipflop.defaults(), indent=indent+4, oper="<= ").get()}
 % if flipflop.rst is not None:
 ${pre}  end else if (${rslvr.resolve(flipflop.rst)}) begin
-${rslvr.get_defaults(flipflop.defaults(), indent=indent+4, oper="<= #1").get()}
+${rslvr.get_defaults(flipflop.defaults(), indent=indent+4, oper="<= ").get()}
 % endif
 % if flipflop.ena is not None:
 ${pre}  end else if (${rslvr.resolve(flipflop.ena)}) begin
