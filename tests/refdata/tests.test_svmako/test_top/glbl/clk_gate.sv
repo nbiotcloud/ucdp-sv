@@ -3,6 +3,7 @@
 // Module:     glbl.clk_gate
 // Data Model: glbl.clk_gate.ClkGateMod
 //
+//
 // GENERATE INPLACE END fileheader =============================================
 
 // GENERATE INPLACE BEGIN header() =============================================

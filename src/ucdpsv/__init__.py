@@ -243,8 +243,10 @@ class SvExprResolver(u.ExprResolver):
                 comments.append("TODO")
                 if target.direction == u.IN:
                     source = self.get_default(target.type_)
-            if isinstance(source, u.Note):
+            elif isinstance(source, u.Note):
                 source = f"/* {source.note} */"
+            else:
+                source = self.resolve(source)
             comments.append(target.doc.comment)
             svcomment = _get_comment(u.join_names(*comments, concat=" - "), pre=" ")
             align.add_row(f".{assign.name}", source, svsep, svcomment)

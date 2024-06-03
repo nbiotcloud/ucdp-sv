@@ -77,6 +77,8 @@ class TopMod(u.AMod):
         core.add_port(u.UintType(param_p), "p_o")
         core.add_port(u.UintType(width_p), "data_i")
         core.add_port(u.UintType(width_p), "data_o")
+        core.add_port(u.UintType(3), "some_i")
+        core.add_port(u.UintType(2), "bits_i")
 
         core.add_port(u.ArrayType(u.UintType(8), param_p), "array_i")
         core.add_port(u.ArrayType(u.UintType(8), 8), "array_open_i")
@@ -84,6 +86,9 @@ class TopMod(u.AMod):
 
         core.con("main_clk_i", "clk_s")
         core.con("main_rst_an_i", "main_rst_an_i")
+
+        core.con("some_i", "3h4")
+        core.con("bits_i", "data_i[3:2]")
 
 
 class TopCoreMod(u.ACoreMod):
