@@ -47,6 +47,7 @@ ${self.beginmod()}\
 ${self.logic(indent=2)}\
 
 ${self.endmod()}\
+
 ${self.footer()}\
 </%block>
 
@@ -55,16 +56,22 @@ ${u.get_copyright(obj) | comment}
 </%def>\
 
 <%def name="fileheader()">\
+<% overview = mod.get_overview() %>\
 //
 // Module:     ${mod.libname}.${mod.modname}
 // Data Model: ${mod.get_modref()}
 //
-${mod.get_overview() | comment}\
+% if overview:
 //
+${overview | comment}
+//
+% endif
 </%def>
 
 
 <%def name="header()">\
+`begin_keywords 1800-2009
+`default_nettype none
 </%def>
 
 
@@ -351,4 +358,6 @@ endmodule // ${mod.modname}
 
 
 <%def name="footer()">\
+`default_nettype wire
+`end_keywords
 </%def>

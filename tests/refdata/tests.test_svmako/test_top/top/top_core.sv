@@ -31,9 +31,10 @@
 // Module:     top.top_core
 // Data Model: top.top.TopCoreMod
 //
-//
 // =============================================================================
 
+`begin_keywords 1800-2009
+`default_nettype none
 
 module top_core #( // top.top.TopCoreMod
   parameter integer       param_p = param_p,
@@ -58,3 +59,6 @@ module top_core #( // top.top.TopCoreMod
 
 
 endmodule // top_core
+
+`default_nettype wire
+`end_keywords

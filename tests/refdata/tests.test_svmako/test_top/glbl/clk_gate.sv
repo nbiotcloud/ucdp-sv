@@ -3,10 +3,11 @@
 // Module:     glbl.clk_gate
 // Data Model: glbl.clk_gate.ClkGateMod
 //
-//
 // GENERATE INPLACE END fileheader =============================================
 
 // GENERATE INPLACE BEGIN header() =============================================
+`begin_keywords 1800-2009
+`default_nettype none
 // GENERATE INPLACE END header =================================================
 
 // GENERATE INPLACE BEGIN beginmod() ===========================================
@@ -25,4 +26,6 @@ endmodule // clk_gate
 // GENERATE INPLACE END endmod =================================================
 
 // GENERATE INPLACE BEGIN footer() =============================================
+`default_nettype wire
+`end_keywords
 // GENERATE INPLACE END footer =================================================
