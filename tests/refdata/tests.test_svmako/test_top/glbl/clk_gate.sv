@@ -6,7 +6,7 @@
 // GENERATE INPLACE END fileheader =============================================
 
 // GENERATE INPLACE BEGIN header() =============================================
-`begin_keywords 1800-2009
+`begin_keywords "1800-2009"
 `default_nettype none
 // GENERATE INPLACE END header =================================================
 
