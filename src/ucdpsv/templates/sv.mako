@@ -70,7 +70,7 @@ ${overview | comment}
 
 
 <%def name="header()">\
-`begin_keywords 1800-2009
+`begin_keywords "1800-2009"
 `default_nettype none
 </%def>
 
