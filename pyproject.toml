@@ -25,7 +25,7 @@
 [project]
 name = "ucdp-sv"
 version = "0.8.0"
-description = "Unified Chip Design Platform"
+description = "Unified Chip Design Platform - System Verilog Support"
 readme = "README.md"
 authors = [
 ]
