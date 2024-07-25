@@ -94,12 +94,10 @@ class TopMod(u.AMod):
         core.add_port(StreamType(9), "key_i")
 
         # open inputs/output
-        core.add_port(u.BoolType(), "open_bool_i")
         core.add_port(u.RailType(), "open_rail_i")
         core.add_port(u.StringType(), "open_string_i")
         core.add_port(u.ArrayType(u.UintType(6), 4), "open_array_i")
         core.add_port(u.ArrayType(u.ArrayType(u.UintType(6), param_p), 2), "open_matrix_i")
-        core.add_port(u.BoolType(), "open_bool_o")
         core.add_port(u.RailType(), "open_rail_o")
         core.add_port(u.StringType(), "open_string_o")
         core.add_port(u.ArrayType(u.UintType(6), 4), "open_array_o")

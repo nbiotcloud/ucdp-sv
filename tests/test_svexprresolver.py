@@ -57,13 +57,13 @@ def test_const(rslvr):
     assert resolve(u.ConstExpr(u.UintType(18, default=5))) == "18'h00005"
     assert resolve(u.ConstExpr(u.UintType(4, default=5))) == "4'h5"
     assert resolve(u.ConstExpr(u.UintType(param))) == "{param {1'b0}}"
-    assert resolve(u.ConstExpr(u.UintType(param, default=2))) == "param'd2"
+    assert resolve(u.ConstExpr(u.UintType(param, default=2))) == "'d2"
 
     assert resolve(u.ConstExpr(u.SintType(18, default=5))) == "18'sh00005"
     assert resolve(u.ConstExpr(u.SintType(4, default=5))) == "4'sh5"
     assert resolve(u.ConstExpr(u.SintType(param))) == "{param {1'sb0}}"
-    assert resolve(u.ConstExpr(u.SintType(param, default=2))) == "param'd2"
-    assert resolve(u.ConstExpr(u.SintType(param, default=-2))) == "-(param'd2)"
+    assert resolve(u.ConstExpr(u.SintType(param, default=2))) == "'d2"
+    assert resolve(u.ConstExpr(u.SintType(param, default=-2))) == "-('d2)"
 
     assert resolve(u.ConstExpr(u.RailType())) == ""
     assert resolve(u.ConstExpr(u.RailType(default=0))) == "1'b0"

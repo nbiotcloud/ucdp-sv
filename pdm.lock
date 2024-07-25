@@ -5,7 +5,7 @@
 groups = ["default", "checktypes", "doc", "format", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:e19d6c61833fca0c608e26da79ed9d5f64d405e373a4b374973424e51f0df7e1"
+content_hash = "sha256:93b14389eacace58809d60d7b0b230523a74a6e587ea3fb99a5453ebc7daf59b"
 
 [[metadata.targets]]
 requires_python = ">=3.10.0,<4.0"
@@ -228,6 +228,49 @@ files = [
 ]
 
 [[package]]
+name = "cocotb"
+version = "1.9.0"
+requires_python = ">=3.6"
+summary = "cocotb is a coroutine based cosimulation library for writing VHDL and Verilog testbenches in Python."
+groups = ["test"]
+dependencies = [
+    "find-libpython",
+]
+files = [
+    {file = "cocotb-1.9.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:c11e21d291ba2f889e33c21d76e9aec6ffdfb5666053dc34452666579daa675b"},
+    {file = "cocotb-1.9.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5832d894419a9e8fe5c242e3ac86588e16e2cb379822dcb154bfec8544ae858e"},
+    {file = "cocotb-1.9.0-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:89503f0749362d36b6fab8636710f1848943c21f9d488672921bac21e9edd29f"},
+    {file = "cocotb-1.9.0-cp310-cp310-win32.whl", hash = "sha256:598b841ed0809e5c64d8c383b8035f6ace5a6f9013f680cdc6981221911c005d"},
+    {file = "cocotb-1.9.0-cp310-cp310-win_amd64.whl", hash = "sha256:8cb4b0edf8f0b47c3b604b461cb574fc75fd97efa893cbaf828f4f2f71cf459e"},
+    {file = "cocotb-1.9.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:17556e3a23562f64d577d0eb117fe02e384aedee997b29497b5c395f5010ff82"},
+    {file = "cocotb-1.9.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1a0381ced5590a726032ba2265c6b70ac12cfb49edb152be86a081bb7d104751"},
+    {file = "cocotb-1.9.0-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:997dbca2a2cd933fd0a44d9fadeebc1e8a40701db15ea06f207811933dceb350"},
+    {file = "cocotb-1.9.0-cp311-cp311-win32.whl", hash = "sha256:a7cea13cb2fe4f5ca735490846342885117778a73008a67ed9cac667aaaf3f0d"},
+    {file = "cocotb-1.9.0-cp311-cp311-win_amd64.whl", hash = "sha256:87a19d3012f505ba7fda37483b851ef0ca40290ad8a9b28a820b84f8574287bb"},
+    {file = "cocotb-1.9.0-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:0ba35617a677ff65a1273411a3dfdfc5f587128ad8cb9e941ab0eb17ec8fb3e2"},
+    {file = "cocotb-1.9.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5a5c91027d7652aaf10e101743edd6b1e832039a19af75fca301275ef30f01d4"},
+    {file = "cocotb-1.9.0-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:02a58ef6c941114964096e7c039bdd4e67e63816cfd2f6a9af6a34cd92b00e8e"},
+    {file = "cocotb-1.9.0-cp312-cp312-win32.whl", hash = "sha256:c848de13583478d71cc91e528e17c051ca6a3b92e89d703ac5015f17cab1287b"},
+    {file = "cocotb-1.9.0-cp312-cp312-win_amd64.whl", hash = "sha256:a84edfbfa57dc6e16845a55feb0b4e1c8b6bbfa5ef1ab6768beba8d81e0546aa"},
+    {file = "cocotb-1.9.0.tar.gz", hash = "sha256:19b4e27b53a16e0b9c4cc5227c7f9d4dccac06e431a4f937e9f5513350196333"},
+]
+
+[[package]]
+name = "cocotb-test"
+version = "0.2.5"
+requires_python = ">=3.7"
+summary = ""
+groups = ["test"]
+dependencies = [
+    "cocotb>=1.5",
+    "find-libpython",
+    "pytest",
+]
+files = [
+    {file = "cocotb-test-0.2.5.tar.gz", hash = "sha256:0f19d9cfc1b7f64fe25394ff5a5d5f788f2d5b4f04b0a742f1330c4b6ebf1343"},
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
@@ -368,6 +411,16 @@ groups = ["format"]
 files = [
     {file = "filelock-3.15.4-py3-none-any.whl", hash = "sha256:6ca1fffae96225dab4c6eaf1c4f4f28cd2568d3ec2a44e15a08520504de468e7"},
     {file = "filelock-3.15.4.tar.gz", hash = "sha256:2207938cbc1844345cb01a5a95524dae30f0ce089eba5b00378295a17e3e90cb"},
+]
+
+[[package]]
+name = "find-libpython"
+version = "0.4.0"
+summary = "Finds the libpython associated with your environment, wherever it may be hiding"
+groups = ["test"]
+files = [
+    {file = "find_libpython-0.4.0-py3-none-any.whl", hash = "sha256:034a4253bd57da3408aefc59aeac1650150f6c1f42e10fdd31615cf1df0842e3"},
+    {file = "find_libpython-0.4.0.tar.gz", hash = "sha256:46f9cdcd397ddb563b2d7592ded3796a41c1df5222443bd9d981721c906c03e6"},
 ]
 
 [[package]]
@@ -849,7 +902,7 @@ files = [
 
 [[package]]
 name = "mkdocstrings"
-version = "0.25.1"
+version = "0.25.2"
 requires_python = ">=3.8"
 summary = "Automatic documentation from sources, for MkDocs."
 groups = ["doc"]
@@ -866,23 +919,23 @@ dependencies = [
     "typing-extensions>=4.1; python_version < \"3.10\"",
 ]
 files = [
-    {file = "mkdocstrings-0.25.1-py3-none-any.whl", hash = "sha256:da01fcc2670ad61888e8fe5b60afe9fee5781017d67431996832d63e887c2e51"},
-    {file = "mkdocstrings-0.25.1.tar.gz", hash = "sha256:c3a2515f31577f311a9ee58d089e4c51fc6046dbd9e9b4c3de4c3194667fe9bf"},
+    {file = "mkdocstrings-0.25.2-py3-none-any.whl", hash = "sha256:9e2cda5e2e12db8bb98d21e3410f3f27f8faab685a24b03b06ba7daa5b92abfc"},
+    {file = "mkdocstrings-0.25.2.tar.gz", hash = "sha256:5cf57ad7f61e8be3111a2458b4e49c2029c9cb35525393b179f9c916ca8042dc"},
 ]
 
 [[package]]
 name = "mkdocstrings-python"
-version = "1.10.5"
+version = "1.10.7"
 requires_python = ">=3.8"
 summary = "A Python handler for mkdocstrings."
 groups = ["doc"]
 dependencies = [
-    "griffe>=0.47",
+    "griffe>=0.48",
     "mkdocstrings>=0.25",
 ]
 files = [
-    {file = "mkdocstrings_python-1.10.5-py3-none-any.whl", hash = "sha256:92e3c588ef1b41151f55281d075de7558dd8092e422cb07a65b18ee2b0863ebb"},
-    {file = "mkdocstrings_python-1.10.5.tar.gz", hash = "sha256:acdc2a98cd9d46c7ece508193a16ca03ccabcb67520352b7449f84b57c162bdf"},
+    {file = "mkdocstrings_python-1.10.7-py3-none-any.whl", hash = "sha256:8999acb8e2cb6ae5edb844ce1ed6a5fcc14285f85cfd9df374d9a0f0be8a40b6"},
+    {file = "mkdocstrings_python-1.10.7.tar.gz", hash = "sha256:bfb5e29acfc69c9177d2b11c18d3127d16e553b8da9bb6d184e428d54795600b"},
 ]
 
 [[package]]
@@ -1145,7 +1198,7 @@ files = [
 
 [[package]]
 name = "pytest"
-version = "8.3.1"
+version = "8.3.2"
 requires_python = ">=3.8"
 summary = "pytest: simple powerful testing with Python"
 groups = ["test"]
@@ -1158,8 +1211,8 @@ dependencies = [
     "tomli>=1; python_version < \"3.11\"",
 ]
 files = [
-    {file = "pytest-8.3.1-py3-none-any.whl", hash = "sha256:e9600ccf4f563976e2c99fa02c7624ab938296551f280835ee6516df8bc4ae8c"},
-    {file = "pytest-8.3.1.tar.gz", hash = "sha256:7e8e5c5abd6e93cb1cc151f23e57adc31fcf8cfd2a3ff2da63e23f732de35db6"},
+    {file = "pytest-8.3.2-py3-none-any.whl", hash = "sha256:4ba08f9ae7dcf84ded419494d229b48d0903ea6407b030eaec46df5e6a73bba5"},
+    {file = "pytest-8.3.2.tar.gz", hash = "sha256:c132345d12ce551242c87269de812483f5bcc87cdbb4722e48487ba194f9fdce"},
 ]
 
 [[package]]
@@ -1474,7 +1527,7 @@ files = [
 
 [[package]]
 name = "ucdp"
-version = "0.8.0"
+version = "0.9.0"
 requires_python = "<4.0,>=3.10.0"
 summary = "Unified Chip Design Platform"
 groups = ["default", "test"]
@@ -1493,8 +1546,8 @@ dependencies = [
     "uniquer>=1.0.2",
 ]
 files = [
-    {file = "ucdp-0.8.0-py3-none-any.whl", hash = "sha256:dbdef8bd768e114d3b9ce775f7c99c93f090d82681a2a73e271aa96149c2b090"},
-    {file = "ucdp-0.8.0.tar.gz", hash = "sha256:b9fe0de49b68c2424a81465d45114815e487fb5ac40154817ce5f861589877f2"},
+    {file = "ucdp-0.9.0-py3-none-any.whl", hash = "sha256:a902ce339f268710378a49a19831bbbd373fcc2dd4b9a9e3824b8aa42b0df428"},
+    {file = "ucdp-0.9.0.tar.gz", hash = "sha256:550d80c1bc684c66d244ea4649bbf6709beb58393f5fd9c06184549c97ca0c70"},
 ]
 
 [[package]]

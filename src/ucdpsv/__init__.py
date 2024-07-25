@@ -36,13 +36,6 @@ DIRKEYWORDS = {
     u.OUT: "output",
     u.INOUT: "inout",
 }
-LOGICKEYWORDS = {
-    u.IN: "wire",
-    u.OUT: "logic",
-    u.INOUT: "wire",
-    u.FWD: "logic",
-    u.BWD: "logic",
-}
 DIRCOMMENT = {
     u.IN: "I",
     u.OUT: "O",
@@ -92,8 +85,7 @@ class SvExprResolver(u.ExprResolver):
         # parameterized width
         width = self.resolve(width)
         if value != 0:
-            # This is not the best, but all we can do - or?
-            return f"{width}'d{value}"
+            return f"'d{value}"
 
         return f"{{{width} {{1'b0}}}}"
 
@@ -109,9 +101,9 @@ class SvExprResolver(u.ExprResolver):
 
         # This is not the best, but all we can do - or?
         if value > 0:
-            return f"{width}'d{value}"
+            return f"'d{value}"
         if value < 0:
-            return f"-({width}'d{-value})"
+            return f"-('d{-value})"
 
         return f"{{{width} {{1'sb0}}}}"
 
@@ -190,15 +182,11 @@ class SvExprResolver(u.ExprResolver):
             else:
                 name = f"{name}{svsep}"
             svcomment = _get_comment(ident.doc.comment)
-            if isinstance(ident.type_, (u.BaseScalarType, u.ArrayType)):
-                logickeyword = "wire" if matchs(ident.name, wirenames) else LOGICKEYWORDS.get(ident.direction)
-            else:
-                logickeyword = ""
             if is4ports:
                 dirkeyword = DIRKEYWORDS.get(ident.direction)
-                align.add_row((dirkeyword, logickeyword, *svdecl, name, svdims, svcomment))
+                align.add_row((dirkeyword, *svdecl, name, svdims, svcomment))
             else:
-                align.add_row((logickeyword, *svdecl, name, svdims, svcomment))
+                align.add_row((*svdecl, name, svdims, svcomment))
         return align
 
     def get_instparams(self, mod: u.BaseMod, is_last: bool = True, indent: int = 0) -> Align:
@@ -301,14 +289,14 @@ class SvExprResolver(u.ExprResolver):
             type_ = type_.keytype
 
         if isinstance(type_, (u.BitType, u.RailType)):
-            keyword = "" if type_.logic else "bit"
+            keyword = "logic" if type_.logic else "bit"
             return keyword, ""
         if isinstance(type_, u.UintType):
-            keyword = "" if type_.logic else "bit"
+            keyword = "logic" if type_.logic else "bit"
             return keyword, self._resolve_slice(type_.slice_).replace(" ", "")
 
         if isinstance(type_, u.SintType):
-            keyword = "signed" if type_.logic else "bit signed"
+            keyword = "logic signed" if type_.logic else "bit signed"
             return keyword, self._resolve_slice(type_.slice_).replace(" ", "")
 
         if isinstance(type_, u.BaseStructType):
@@ -325,7 +313,7 @@ class SvExprResolver(u.ExprResolver):
             return "string", ""
 
         if isinstance(type_, u.FloatType):
-            return "shortreal", ""
+            return "real", ""
 
         if isinstance(type_, u.DoubleType):
             return "real", ""
@@ -346,7 +334,7 @@ class SvExprResolver(u.ExprResolver):
 
     def get_value(self, ident: u.Ident) -> str:
         """Get SV Value."""
-        return self._resolve_value(ident.type_)
+        return self._resolve_value(ident.type_, value=getattr(ident, "value", None))
 
     def _iter_idents(
         self, align: Align, pre: str, idents: Iterable[u.Ident | u.Assign], sep: str = ";", is_last: bool = False

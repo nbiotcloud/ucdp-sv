@@ -39,32 +39,32 @@
 module top #( // top.top.TopMod
   parameter integer               param_p   = 10,
   parameter integer               width_p   = $clog2(param_p + 1),
-  parameter         [param_p-1:0] default_p = {param_p {1'b0}}
+  parameter logic   [param_p-1:0] default_p = {param_p {1'b0}}
 ) (
   // main_i
-  input  wire                main_clk_i,
-  input  wire                main_rst_an_i, // Async Reset (Low-Active)
+  input  logic               main_clk_i,
+  input  logic               main_rst_an_i, // Async Reset (Low-Active)
   // intf_i: RX/TX
   output logic               intf_rx_o,
-  input  wire                intf_tx_i,
+  input  logic               intf_tx_i,
   // bus_i
-  input  wire  [1:0]         bus_trans_i,
-  input  wire  [31:0]        bus_addr_i,
-  input  wire                bus_write_i,
-  input  wire  [31:0]        bus_wdata_i,
+  input  logic [1:0]         bus_trans_i,
+  input  logic [31:0]        bus_addr_i,
+  input  logic               bus_write_i,
+  input  logic [31:0]        bus_wdata_i,
   output logic               bus_ready_o,
   output logic               bus_resp_o,
   output logic [31:0]        bus_rdata_o,
   `ifdef ASIC
   output logic [8:0]         brick_o,
   `endif // ASIC
-  input  wire  [param_p-1:0] data_i,
+  input  logic [param_p-1:0] data_i,
   output logic [width_p-1:0] cnt_o,
   // key_i
-  input  wire                key_valid_i,
+  input  logic               key_valid_i,
   output logic               key_accept_o,
-  input  wire  [8:0]         key_data_i,
-  inout  wire  [3:0]         bidir_io
+  input  logic [8:0]         key_data_i,
+  inout  logic [3:0]         bidir_io
   `ifdef ASIC
   ,
   output logic [8:0]         value_o
@@ -76,7 +76,7 @@ module top #( // top.top.TopMod
   // ------------------------------------------------------
   //  Local Parameter
   // ------------------------------------------------------
-  localparam [param_p-1:0] const_c = default_p / param_p'd2;
+  localparam logic [param_p-1:0] const_c = default_p / 'd2;
 
 
   // ------------------------------------------------------
@@ -125,12 +125,10 @@ module top #( // top.top.TopMod
     .key_valid_i  (1'b0              ), // TODO
     .key_accept_o (                  ), // TODO
     .key_data_i   (9'h000            ), // TODO
-    .open_bool_i  (false             ), // TODO
     .open_rail_i  (                  ), // RAIL - TODO
     .open_string_i(""                ), // TODO
     .open_array_i ('{4{6'h00}}       ), // TODO
     .open_matrix_i('{2{'{10{6'h00}}}}), // TODO
-    .open_bool_o  (                  ), // TODO
     .open_rail_o  (                  ), // RAIL - TODO
     .open_string_o(                  ), // TODO
     .open_array_o (                  ), // TODO
@@ -154,7 +152,7 @@ module top #( // top.top.TopMod
     if (main_rst_an_i == 1'b0) begin
       data_r <=  9'h000;
     end else begin
-      data_r <= #1 key_data_s;
+      data_r <=  key_data_s;
     end
   end
 

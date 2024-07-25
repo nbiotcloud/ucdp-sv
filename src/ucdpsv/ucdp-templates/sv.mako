@@ -280,7 +280,7 @@ ${pre}  end else if (${rslvr.resolve(flipflop.ena)}) begin
 % else:
 ${pre}  end else begin
 % endif
-${rslvr.get_assigns(flipflop, indent=indent+4, oper="<= #1").get()}
+${rslvr.get_assigns(flipflop, indent=indent+4, oper=f"<= {rslvr.ff_dly}").get()}
 ${pre}  end
 ${pre}end
 % endfor

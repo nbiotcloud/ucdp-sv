@@ -12,9 +12,9 @@
 
 // GENERATE INPLACE BEGIN beginmod() ===========================================
 module clk_gate ( // glbl.clk_gate.ClkGateMod
-  input  wire  clk_i,
+  input  logic clk_i,
   output logic clk_o,
-  input  wire  ena_i
+  input  logic ena_i
 );
 // GENERATE INPLACE END beginmod ===============================================
 
