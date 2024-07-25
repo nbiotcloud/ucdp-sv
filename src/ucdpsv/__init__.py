@@ -293,7 +293,7 @@ class SvExprResolver(u.ExprResolver):
                     align.add_row(("tran", f"u_tran_{name}", f"({name},", "", f"{source});"))
         return align
 
-    def get_decl(self, type_: u.BaseType) -> SvDecl:  # noqa: PLR0911
+    def get_decl(self, type_: u.BaseType) -> SvDecl:  # noqa: PLR0911,C901
         """Get SV Declaration."""
         while isinstance(type_, u.ArrayType):
             type_ = type_.itemtype
@@ -301,18 +301,22 @@ class SvExprResolver(u.ExprResolver):
             type_ = type_.keytype
 
         if isinstance(type_, (u.BitType, u.RailType)):
-            return "", ""
+            keyword = "" if type_.logic else "bit"
+            return keyword, ""
         if isinstance(type_, u.UintType):
-            return "", self._resolve_slice(type_.slice_).replace(" ", "")
+            keyword = "" if type_.logic else "bit"
+            return keyword, self._resolve_slice(type_.slice_).replace(" ", "")
 
         if isinstance(type_, u.SintType):
-            return "signed", self._resolve_slice(type_.slice_).replace(" ", "")
+            keyword = "signed" if type_.logic else "bit signed"
+            return keyword, self._resolve_slice(type_.slice_).replace(" ", "")
 
         if isinstance(type_, u.BaseStructType):
             return None
 
         if isinstance(type_, u.IntegerType):
-            return "integer", ""
+            keyword = "integer" if type_.logic else "int"
+            return keyword, ""
 
         if isinstance(type_, u.BoolType):
             return "bool", ""
@@ -320,7 +324,13 @@ class SvExprResolver(u.ExprResolver):
         if isinstance(type_, u.StringType):
             return "string", ""
 
-        raise ValueError(type_)
+        if isinstance(type_, u.FloatType):
+            return "shortreal", ""
+
+        if isinstance(type_, u.DoubleType):
+            return "real", ""
+
+        raise ValueError(type_)  # pragma: no cover
 
     def get_dims(self, type_: u.BaseType) -> str:
         """Get SV Dimensions."""
@@ -336,7 +346,7 @@ class SvExprResolver(u.ExprResolver):
 
     def get_value(self, ident: u.Ident) -> str:
         """Get SV Value."""
-        return self._resolve_value(ident.type_, value=ident.value)
+        return self._resolve_value(ident.type_)
 
     def _iter_idents(
         self, align: Align, pre: str, idents: Iterable[u.Ident | u.Assign], sep: str = ";", is_last: bool = False

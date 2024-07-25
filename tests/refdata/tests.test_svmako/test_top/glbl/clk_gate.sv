@@ -7,7 +7,7 @@
 
 // GENERATE INPLACE BEGIN header() =============================================
 `begin_keywords "1800-2009"
-`default_nettype none
+`default_nettype none  // implicit wires are forbidden
 // GENERATE INPLACE END header =================================================
 
 // GENERATE INPLACE BEGIN beginmod() ===========================================

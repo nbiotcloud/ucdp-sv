@@ -34,7 +34,7 @@
 // =============================================================================
 
 `begin_keywords "1800-2009"
-`default_nettype none
+`default_nettype none  // implicit wires are forbidden
 
 module top #( // top.top.TopMod
   parameter integer               param_p   = 10,
@@ -55,8 +55,20 @@ module top #( // top.top.TopMod
   output logic               bus_ready_o,
   output logic               bus_resp_o,
   output logic [31:0]        bus_rdata_o,
+  `ifdef ASIC
+  output logic [8:0]         brick_o,
+  `endif // ASIC
   input  wire  [param_p-1:0] data_i,
-  output logic [width_p-1:0] cnt_o
+  output logic [width_p-1:0] cnt_o,
+  // key_i
+  input  wire                key_valid_i,
+  output logic               key_accept_o,
+  input  wire  [8:0]         key_data_i,
+  inout  wire  [3:0]         bidir_io
+  `ifdef ASIC
+  ,
+  output logic [8:0]         value_o
+  `endif // ASIC
 );
 
 
@@ -70,8 +82,14 @@ module top #( // top.top.TopMod
   // ------------------------------------------------------
   //  Signals
   // ------------------------------------------------------
+  // key_s
+  logic       key_valid_s;
+  logic       key_accept_s;
+  logic [8:0] key_data_s;
+  logic [3:0] bidir_s;
   logic       clk_s;
-  logic [7:0] array_s [0:0+(param_p-1)];
+  logic [7:0] array_s       [0:0+(param_p-1)];
+  logic [8:0] data_r;
 
 
   // ------------------------------------------------------
@@ -92,20 +110,64 @@ module top #( // top.top.TopMod
     .width_p($clog2(10 + 1))
   ) u_core (
     // main_i
-    .main_clk_i   (clk_s        ),
-    .main_rst_an_i(main_rst_an_i), // Async Reset (Low-Active)
-    .p_i          ({10 {1'b0}}  ), // TODO
-    .p_o          (             ), // TODO
-    .data_i       ({8 {1'b0}}   ), // TODO
-    .data_o       (             ), // TODO
-    .some_i       (3'h4         ),
-    .bits_i       (data_i[3:2]  ),
-    .array_i      (array_s      ),
-    .array_open_i ('{8{8'h00}}  ), // TODO
+    .main_clk_i   (clk_s             ),
+    .main_rst_an_i(main_rst_an_i     ), // Async Reset (Low-Active)
+    .p_i          ({10 {1'b0}}       ), // TODO
+    .p_o          (                  ), // TODO
+    .data_i       ({8 {1'b0}}        ), // TODO
+    .data_o       (                  ), // TODO
+    `ifdef ASIC
+    .brick_o      (brick_o           ),
+    `endif // ASIC
+    .some_i       (3'h4              ),
+    .bits_i       (data_i[3:2]       ),
+    // key_i
+    .key_valid_i  (1'b0              ), // TODO
+    .key_accept_o (                  ), // TODO
+    .key_data_i   (9'h000            ), // TODO
+    .open_bool_i  (false             ), // TODO
+    .open_rail_i  (                  ), // RAIL - TODO
+    .open_string_i(""                ), // TODO
+    .open_array_i ('{4{6'h00}}       ), // TODO
+    .open_matrix_i('{2{'{10{6'h00}}}}), // TODO
+    .open_bool_o  (                  ), // TODO
+    .open_rail_o  (                  ), // RAIL - TODO
+    .open_string_o(                  ), // TODO
+    .open_array_o (                  ), // TODO
+    .open_matrix_o(                  ), // TODO
+    .note_i       (7'h00             ), // TODO
+    .nosuffix0    (7'h00             ), // I - TODO
+    .nosuffix1    (                  ), // O - TODO
+    .array_i      (array_s           ),
+    .array_open_i ('{8{8'h00}}       ), // TODO
     // intf_i: RX/TX
-    .intf_rx_o    (intf_rx_o    ),
-    .intf_tx_i    (intf_tx_i    )
+    .intf_rx_o    (intf_rx_o         ),
+    .intf_tx_i    (intf_tx_i         )
   );
+
+
+  // ------------------------------------------------------
+  //  Flip-Flops
+  // ------------------------------------------------------
+
+  always_ff @(posedge main_clk_i or negedge main_rst_an_i) begin: proc_seq_0
+    if (main_rst_an_i == 1'b0) begin
+      data_r <=  9'h000;
+    end else begin
+      data_r <= #1 key_data_s;
+    end
+  end
+
+  // ------------------------------------------------------
+  //  Assigns
+  // ------------------------------------------------------
+  `ifdef ASIC
+  assign key_data_s   = value_o;
+  `endif // ASIC
+  // key_s
+  assign key_valid_s  = key_valid_i;
+  assign key_accept_o = key_accept_s;
+  assign key_data_s   = key_data_i;
 
 endmodule // top
 
