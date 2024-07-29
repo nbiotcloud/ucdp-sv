@@ -42,37 +42,37 @@ module top_core #( // top.top.TopCoreMod
   parameter logic signed [7:0] other_p = 8'shFD
 ) (
   // main_i
-  input  logic                main_clk_i,
-  input  logic                main_rst_an_i,                         // Async Reset (Low-Active)
-  input  logic  [param_p-1:0] p_i,
+  input  wire                 main_clk_i,
+  input  wire                 main_rst_an_i,                         // Async Reset (Low-Active)
+  input  wire   [param_p-1:0] p_i,
   output logic  [param_p-1:0] p_o,
   input  bit    [width_p-1:0] data_i,
   output logic  [width_p-1:0] data_o,
   `ifdef ASIC
   output logic  [8:0]         brick_o,
   `endif // ASIC
-  input  logic  [2:0]         some_i,
-  input  logic  [1:0]         bits_i,
+  input  wire   [2:0]         some_i,
+  input  wire   [1:0]         bits_i,
   // key_i
-  input  logic                key_valid_i,
+  input  wire                 key_valid_i,
   output logic                key_accept_o,
-  input  logic  [8:0]         key_data_i,
-  input  logic                open_rail_i,
+  input  wire   [8:0]         key_data_i,
+  input  wire                 open_rail_i,
   input  string               open_string_i,
-  input  logic  [5:0]         open_array_i   [0:3],
-  input  logic  [5:0]         open_matrix_i  [0:1][0:0+(param_p-1)],
+  input  wire   [5:0]         open_array_i   [0:3],
+  input  wire   [5:0]         open_matrix_i  [0:1][0:0+(param_p-1)],
   output logic                open_rail_o,
   output string               open_string_o,
   output logic  [5:0]         open_array_o   [0:3],
   output logic  [5:0]         open_matrix_o  [0:1][0:3],
-  input  logic  [6:0]         note_i,
-  input  logic  [6:0]         nosuffix0,
+  input  wire   [6:0]         note_i,
+  input  wire   [6:0]         nosuffix0,
   output logic  [6:0]         nosuffix1,
-  input  logic  [7:0]         array_i        [0:0+(param_p-1)],
-  input  logic  [7:0]         array_open_i   [0:7],
+  input  wire   [7:0]         array_i        [0:0+(param_p-1)],
+  input  wire   [7:0]         array_open_i   [0:7],
   // intf_i: RX/TX
   output logic                intf_rx_o,
-  input  logic                intf_tx_i
+  input  wire                 intf_tx_i
 );
 
 

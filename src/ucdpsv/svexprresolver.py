@@ -42,7 +42,7 @@ DIRCOMMENT = {
     u.INOUT: "IO",
 }
 
-SvDecl = tuple[str, str] | None
+SvDecl = tuple[str, str]
 
 
 def _is_param(ident: u.Ident) -> bool:
@@ -149,9 +149,7 @@ class SvExprResolver(u.ExprResolver):
         self, ports: u.Idents, is_last: bool = True, indent: int = 0, wirenames: u.Names | None = None
     ) -> Align:
         """Return `Align` With Port Declarations."""
-        return self._get_signaldecls(
-            ports.iter(), ",", is_last=is_last, indent=indent, wirenames=wirenames, is4ports=True
-        )
+        return self._get_signaldecls(ports.iter(), ",", is_last=is_last, indent=indent, wirenames=wirenames, ports=True)
 
     def get_signaldecls(self, signals: u.Idents, indent: int = 0, wirenames: u.Names | None = None) -> Align:
         """Return `Align` With Signal Declarations."""
@@ -168,7 +166,7 @@ class SvExprResolver(u.ExprResolver):
         is_last: bool,
         indent: int,
         wirenames: u.Names | None = None,
-        is4ports: bool = False,
+        ports: bool = False,
     ) -> Align:
         align = Align(rtrim=True, strip_empty_cols=True)
         pre = " " * indent
@@ -182,9 +180,8 @@ class SvExprResolver(u.ExprResolver):
             else:
                 name = f"{name}{svsep}"
             svcomment = _get_comment(ident.doc.comment)
-            if is4ports:
-                dirkeyword = DIRKEYWORDS.get(ident.direction)
-                align.add_row((dirkeyword, *svdecl, name, svdims, svcomment))
+            if ports:
+                align.add_row((*_get_port_decl(ident, svdecl), name, svdims, svcomment))
             else:
                 align.add_row((*svdecl, name, svdims, svcomment))
         return align
@@ -281,7 +278,7 @@ class SvExprResolver(u.ExprResolver):
                     align.add_row(("tran", f"u_tran_{name}", f"({name},", "", f"{source});"))
         return align
 
-    def get_decl(self, type_: u.BaseType) -> SvDecl:  # noqa: PLR0911,C901
+    def get_decl(self, type_: u.BaseType) -> SvDecl | None:  # noqa: PLR0911,C901
         """Get SV Declaration."""
         while isinstance(type_, u.ArrayType):
             type_ = type_.itemtype
@@ -388,7 +385,7 @@ def _get_comment(comment, level=0, pre="") -> str:
     return ""
 
 
-def _get_nosepmap(decls: Iterable[tuple[u.Ident, SvDecl]]) -> dict[str, str]:
+def _get_nosepmap(decls: Iterable[tuple[u.Ident, SvDecl | None]]) -> dict[str, str]:
     """Create Auxiliary Structure To Determine Proper Commas."""
     nosepmap: dict[str, str] = {}
     for ident, svdecl in decls:
@@ -421,6 +418,12 @@ def _add_declcomment(align: Align, ident: u.Ident | u.Assign, pendlevel, svdecl,
         align.add_spacer(_get_comment(comment, pre=pre))
         return 0
     return None
+
+
+def _get_port_decl(ident: u.Ident, svdecl: SvDecl) -> tuple[str, str, str]:
+    dirkeyword = DIRKEYWORDS[ident.direction]
+    svdecl0 = svdecl[0].replace("logic", "wire") if ident.direction != u.OUT else svdecl[0]
+    return dirkeyword, svdecl0, svdecl[1]
 
 
 def get_resolver(mod: u.BaseMod, inst: u.BaseMod | None = None) -> SvExprResolver:
