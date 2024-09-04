@@ -43,7 +43,7 @@ module top_core #( // top.top.TopCoreMod
 ) (
   // main_i
   input  wire                 main_clk_i,
-  input  wire                 main_rst_an_i,                         // Async Reset (Low-Active)
+  input  wire                 main_rst_an_i,                     // Async Reset (Low-Active)
   input  wire   [param_p-1:0] p_i,
   output logic  [param_p-1:0] p_o,
   input  bit    [width_p-1:0] data_i,
@@ -59,8 +59,9 @@ module top_core #( // top.top.TopCoreMod
   input  wire   [8:0]         key_data_i,
   input  wire                 open_rail_i,
   input  string               open_string_i,
-  input  wire   [5:0]         open_array_i   [0:3],
-  input  wire   [5:0]         open_matrix_i  [0:1][0:0+(param_p-1)],
+  input  wire   [5:0]         open_array_i   [3:0],
+  input  wire   [5:0]         open_matrix_i  [0:1][0:param_p-1],
+  input  wire   [5:0]         matrix_down_i  [0:1][param_p-1:0],
   output logic                open_rail_o,
   output string               open_string_o,
   output logic  [5:0]         open_array_o   [0:3],
@@ -68,7 +69,7 @@ module top_core #( // top.top.TopCoreMod
   input  wire   [6:0]         note_i,
   input  wire   [6:0]         nosuffix0,
   output logic  [6:0]         nosuffix1,
-  input  wire   [7:0]         array_i        [0:0+(param_p-1)],
+  input  wire   [7:0]         array_i        [0:param_p-1],
   input  wire   [7:0]         array_open_i   [0:7],
   // intf_i: RX/TX
   output logic                intf_rx_o,
