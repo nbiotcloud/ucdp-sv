@@ -35,7 +35,7 @@ import ucdpsv as usv
 // ${makolator.info.genwarning}
 //
 // =============================================================================
-${self.copyright(mod)}\
+${self.copyright()}\
 // =============================================================================
 ${self.fileheader()}\
 // =============================================================================
@@ -51,8 +51,8 @@ ${self.endmod()}\
 ${self.footer()}\
 </%block>
 
-<%def name="copyright(obj)">\
-${u.get_copyright(obj) | comment}
+<%def name="copyright(obj=None)">\
+${u.get_copyright(obj or mod) | comment}
 </%def>\
 
 <%def name="fileheader()">\

@@ -23,8 +23,6 @@
 #
 """Clock Gate."""
 
-from typing import ClassVar
-
 import ucdp as u
 from fileliststandard import HdlFileList
 
@@ -33,7 +31,7 @@ class ClkGateMod(u.AMod):
     """Clock Gate."""
 
     # File Lists
-    filelists: ClassVar[u.ModFileLists] = (HdlFileList(gen="inplace"),)
+    filelists: u.ClassVar[u.ModFileLists] = (HdlFileList(gen="inplace"),)
 
     def _build(self) -> None:
         self.add_port(u.ClkType(), "clk_i")

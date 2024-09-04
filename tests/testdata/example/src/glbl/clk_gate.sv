@@ -1,3 +1,6 @@
+// GENERATE INPLACE BEGIN copyright()
+// GENERATE INPLACE END copyright
+
 // GENERATE INPLACE BEGIN fileheader()
 // GENERATE INPLACE END fileheader
 
@@ -7,8 +10,8 @@
 // GENERATE INPLACE BEGIN beginmod()
 // GENERATE INPLACE END beginmod
 
-    // GENERATE INPLACE BEGIN logic()
-    // GENERATE INPLACE END logic
+  // GENERATE INPLACE BEGIN logic()
+  // GENERATE INPLACE END logic
 
 // GENERATE INPLACE BEGIN endmod()
 // GENERATE INPLACE END endmod

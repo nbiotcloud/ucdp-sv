@@ -23,8 +23,6 @@
 #
 """UART Example."""
 
-from typing import ClassVar
-
 import ucdp as u
 from fileliststandard import HdlFileList
 from glbl.bus import BusType
@@ -46,7 +44,7 @@ class IoType(u.AStructType):
 class TopMod(u.AMod):
     """Top Module."""
 
-    filelists: ClassVar[u.ModFileLists] = (HdlFileList(gen="full"),)
+    filelists: u.ClassVar[u.ModFileLists] = (HdlFileList(gen="full"),)
 
     def _build(self) -> None:  # noqa: PLR0915
         parser = self.parser
@@ -96,8 +94,9 @@ class TopMod(u.AMod):
         # open inputs/output
         core.add_port(u.RailType(), "open_rail_i")
         core.add_port(u.StringType(), "open_string_i")
-        core.add_port(u.ArrayType(u.UintType(6), 4), "open_array_i")
+        core.add_port(u.ArrayType(u.UintType(6), 4, direction=u.DOWN), "open_array_i")
         core.add_port(u.ArrayType(u.ArrayType(u.UintType(6), param_p), 2), "open_matrix_i")
+        core.add_port(u.ArrayType(u.ArrayType(u.UintType(6), param_p, direction=u.DOWN), 2), "matrix_down_i")
         core.add_port(u.RailType(), "open_rail_o")
         core.add_port(u.StringType(), "open_string_o")
         core.add_port(u.ArrayType(u.UintType(6), 4), "open_array_o")
@@ -138,4 +137,4 @@ class TopMod(u.AMod):
 class TopCoreMod(u.ACoreMod):
     """Core Module."""
 
-    filelists: ClassVar[u.ModFileLists] = (HdlFileList(gen="full"),)
+    filelists: u.ClassVar[u.ModFileLists] = (HdlFileList(gen="full"),)

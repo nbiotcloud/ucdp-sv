@@ -88,7 +88,7 @@ module top #( // top.top.TopMod
   logic [8:0] key_data_s;
   logic [3:0] bidir_s;
   logic       clk_s;
-  logic [7:0] array_s       [0:0+(param_p-1)];
+  logic [7:0] array_s       [0:param_p-1];
   logic [8:0] data_r;
 
 
@@ -129,6 +129,7 @@ module top #( // top.top.TopMod
     .open_string_i(""                ), // TODO
     .open_array_i ('{4{6'h00}}       ), // TODO
     .open_matrix_i('{2{'{10{6'h00}}}}), // TODO
+    .matrix_down_i('{2{'{10{6'h00}}}}), // TODO
     .open_rail_o  (                  ), // RAIL - TODO
     .open_string_o(                  ), // TODO
     .open_array_o (                  ), // TODO

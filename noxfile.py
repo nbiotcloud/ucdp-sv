@@ -41,13 +41,14 @@ os.environ.update(
     }
 )
 nox.options.sessions = ["format", "test", "testsv", "checkdeps", "checktypes", "doc"]
+nox.options.reuse_existing_virtualenvs = True
 
 
 @nox.session()
 def format(session: nox.Session) -> None:
     """Run Code Formatter and Checks."""
     _init(session)
-    session.run_always("pdm", "install", "-G", "format")
+    session.run_install("pdm", "install", "-G", "format")
     session.run("pre-commit", "run", "--all-files")
 
 
@@ -55,7 +56,7 @@ def format(session: nox.Session) -> None:
 def test(session: nox.Session) -> None:
     """Run Test - Additional Arguments are forwarded to `pytest`."""
     _init(session)
-    session.run_always("pdm", "install", "-G", "test")
+    session.run_install("pdm", "install", "-G", "test")
     session.run("pytest", "-vv", *session.posargs)
     htmlcovfile = pathlib.Path().resolve() / "htmlcov" / "index.html"
     print(f"Coverage report:\n\n    file://{htmlcovfile!s}\n")
@@ -65,7 +66,7 @@ def test(session: nox.Session) -> None:
 def checkdeps(session: nox.Session) -> None:
     """Check Dependencies."""
     _init(session)
-    session.run_always("pdm", "install")
+    session.run_install("pdm", "install")
     session.run("python", "-c", "import ucdpsv")
 
 
@@ -73,7 +74,7 @@ def checkdeps(session: nox.Session) -> None:
 def checktypes(session: nox.Session) -> None:
     """Run Type Checks."""
     _init(session)
-    session.run_always("pdm", "install", "-G", "checktypes")
+    session.run_install("pdm", "install", "-G", "checktypes")
     session.run("mypy", "src", "tests")
 
 
@@ -81,7 +82,7 @@ def checktypes(session: nox.Session) -> None:
 def doc(session: nox.Session) -> None:
     """Build Documentation."""
     _init(session)
-    session.run_always("pdm", "install", "-G", "doc")
+    session.run_install("pdm", "install", "-G", "doc")
     session.run("mkdocs", "build")
     shutil.make_archive("docs", "zip", "site")
     docindexfile = pathlib.Path().resolve() / "site" / "index.html"
@@ -92,7 +93,7 @@ def doc(session: nox.Session) -> None:
 def doc_serve(session: nox.Session) -> None:
     """Build Documentation and serve via HTTP."""
     _init(session)
-    session.run_always("pdm", "install", "-G", "doc")
+    session.run_install("pdm", "install", "-G", "doc")
     session.run("mkdocs", "serve", "--no-strict")
 
 
@@ -100,7 +101,7 @@ def doc_serve(session: nox.Session) -> None:
 def dev(session: nox.Session) -> None:
     """Development Environment - Additional Arguments Are Executed."""
     _init(session)
-    session.run_always("pdm", "install", "-G", ":all")
+    session.run_install("pdm", "install", "-G", ":all")
     session.run("pip", "install", "-e", ".")
     if session.posargs:
         session.run(*session.posargs, external=True)
@@ -110,7 +111,7 @@ def dev(session: nox.Session) -> None:
 def testsv(session: nox.Session) -> None:
     """Run System Verilog Tests - Additional Arguments are forwarded to `pytest`."""
     _init(session)
-    session.run_always("pdm", "install", "-G", ":all")
+    session.run_install("pdm", "install", "-G", ":all")
     with session.chdir("tests"):
         session.run("pytest", "-vvsrA", "regression.py", *session.posargs)
 
