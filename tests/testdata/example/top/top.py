@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-"""UART Example."""
+"""Example."""
 
 import ucdp as u
 from fileliststandard import HdlFileList
@@ -129,8 +129,9 @@ class TopMod(u.AMod):
         self.route("key_s", "key_i")
 
         self.add_flipflop(u.UintType(9), "data_r", "main_clk_i", "main_rst_an_i", nxt="key_data_s")
+        self.add_flipflop(u.UintType(param_p), "data2_r", "main_clk_i", "main_rst_an_i", nxt="data_i")
 
-        self.route("value_o", "key_data_s")
+        self.assign("value_o", "key_data_s")
         # self.route("bidir_s", "bidir_io")
 
 

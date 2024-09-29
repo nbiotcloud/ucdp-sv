@@ -258,10 +258,10 @@ class SvExprResolver(u.ExprResolver):
                 source = assign.source
                 if source is not None:
                     source = self.resolve(source)
-                dirmode = assign.target.direction.mode
-                if dirmode == 1:
+                direction = assign.target.direction
+                if direction in (u.OUT, u.FWD):
                     align.add_row((name, oper, f"{source};"))
-                elif dirmode == -1:
+                elif direction in (u.IN, u.BWD):
                     align.add_row((source, oper, f"{name};"))
         else:
             for assign, _, _ in self._iter_idents(align, pre, assigns):
@@ -269,10 +269,10 @@ class SvExprResolver(u.ExprResolver):
                 source = assign.source
                 if source is not None:
                     source = self.resolve(source)
-                dirmode = assign.target.direction.mode
-                if dirmode == 1:
+                direction = assign.target.direction
+                if direction in (u.OUT, u.FWD):
                     align.add_row(("assign", "", name, "=", f"{source};"))
-                elif dirmode == -1:
+                elif direction in (u.IN, u.BWD):
                     align.add_row(("assign", "", source, "=", f"{name};"))
                 else:
                     align.add_row(("tran", f"u_tran_{name}", f"({name},", "", f"{source});"))
@@ -374,6 +374,24 @@ class SvExprResolver(u.ExprResolver):
         if not isinstance(width, int):
             width = self._resolve(width)
         return f"'{{{width}{{{itemvalue}}}}}"
+
+    def split_mux_conds(self, sel, conds):
+        """Split Multiplexer Conditions."""
+        cases, defaultcase = [], None
+        default = sel.type_.default
+
+        for cond, assigns in conds.items():
+            condstr = self._resolve(cond)
+            is_range = isinstance(cond, u.RangeExpr)
+            is_default = default in cond.range_ if is_range else default == sel.type_.encode(cond)
+            if is_default:
+                defaultcase = condstr, assigns
+            elif is_range:
+                cases.append((condstr, assigns))
+            else:
+                cases.append((condstr, assigns))
+
+        return cases, defaultcase
 
 
 def _get_comment(comment, level=0, pre="") -> str:
