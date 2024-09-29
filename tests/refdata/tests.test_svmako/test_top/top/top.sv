@@ -83,13 +83,14 @@ module top #( // top.top.TopMod
   //  Signals
   // ------------------------------------------------------
   // key_s
-  logic       key_valid_s;
-  logic       key_accept_s;
-  logic [8:0] key_data_s;
-  logic [3:0] bidir_s;
-  logic       clk_s;
-  logic [7:0] array_s       [0:param_p-1];
-  logic [8:0] data_r;
+  logic               key_valid_s;
+  logic               key_accept_s;
+  logic [8:0]         key_data_s;
+  logic [3:0]         bidir_s;
+  logic               clk_s;
+  logic [7:0]         array_s       [0:param_p-1];
+  logic [8:0]         data_r;
+  logic [param_p-1:0] data2_r;
 
 
   // ------------------------------------------------------
@@ -151,9 +152,11 @@ module top #( // top.top.TopMod
 
   always_ff @(posedge main_clk_i or negedge main_rst_an_i) begin: proc_seq_0
     if (main_rst_an_i == 1'b0) begin
-      data_r <=  9'h000;
+      data_r  <=  9'h000;
+      data2_r <=  {param_p {1'b0}};
     end else begin
-      data_r <=  key_data_s;
+      data_r  <=  key_data_s;
+      data2_r <=  data_i;
     end
   end
 
@@ -161,7 +164,7 @@ module top #( // top.top.TopMod
   //  Assigns
   // ------------------------------------------------------
   `ifdef ASIC
-  assign key_data_s   = value_o;
+  assign value_o      = key_data_s;
   `endif // ASIC
   // key_s
   assign key_valid_s  = key_valid_i;

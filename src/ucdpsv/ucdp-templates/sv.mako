@@ -186,8 +186,6 @@ ${align.get()}
 
 
 <%def name="insts(indent=0)">\
-<%
-%>\
 % for modinst in mod.insts:
 
 
@@ -291,14 +289,15 @@ ${pre}end
 % for mux_ in mod.muxes:
 
 
-${mux(mod, mux_, indent)}\
+${mux(mux_, indent)}\
 % endfor
 </%def>
 
 
 <%def name="mux(mux, indent=0)">\
 <%
-  mux = get_mux(mod, mux)
+  rslvr = usv.get_resolver(mod)
+  mux = mod.get_mux(mux)
   pre = " " * indent
   comment = mux.doc.comment or f"Multiplexer {mux.name}"
 %>\
