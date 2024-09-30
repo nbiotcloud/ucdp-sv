@@ -309,7 +309,7 @@ ${pre}// ------------------------------------------------------
 % if mux:
 ${pre}always_comb begin : proc_${mux.name}
 ${pre}  // defaults
-${rslvr.get_defaults(mux.defaults(), indent=indent+2).get()}
+${rslvr.get_assigns(mux.defaults(), indent=indent+2, oper="=").get()}
 %   for sel, conds in mux:
 
 ${pre}  casez (${sel})
