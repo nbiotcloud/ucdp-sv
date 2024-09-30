@@ -35,6 +35,7 @@ class MyEnumType(u.AEnumType):
     def _build(self):
         self._add(0, "one")
         self._add(1, "two")
+        self._add(2, "three")
 
 
 class MuxMod(u.AMod):
@@ -72,6 +73,9 @@ class MuxMod(u.AMod):
         mux.set(sel, "3h4", q0, "c0_i")
 
         mux.set(sel, "3h4", "q3_s", "c0_i")
+
+        mux.set("sel_i", "my_enum_two_e", "q4_o", "b0_i")
+        mux.set("sel_i", self.ports["sel_i"].type_.new(default=3), "q4_o", "a0_i")
 
         mux.set("sel_s", "3h0", "q1_o", "a1_i")
         mux.set("sel_s", "3h1", "q1_o", "b1_i")

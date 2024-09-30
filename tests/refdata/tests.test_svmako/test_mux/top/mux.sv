@@ -61,6 +61,7 @@ module mux ( // top.mux.MuxMod
   localparam logic   [2:0] my_enum_max_p     = 3'h7;
   localparam logic   [2:0] my_enum_one_e     = 3'h0;
   localparam logic   [2:0] my_enum_two_e     = 3'h1;
+  localparam logic   [2:0] my_enum_three_e   = 3'h2;
   localparam logic   [2:0] my_enum_default_p = 3'h0;
 
 
@@ -76,9 +77,10 @@ module mux ( // top.mux.MuxMod
   // ------------------------------------------------------
   always_comb begin : proc_main
     // defaults
-    q0_o = 4'h0;
-    q1_o = 8'h00;
+    q0_o = 4'h8;
+    q1_o = c1_i;
     q3_s = 4'h0;
+    q4_o = 4'h0;
 
     casez (sel_s)
       3'h1: begin
@@ -94,6 +96,15 @@ module mux ( // top.mux.MuxMod
       end
       default: begin // 3'h0
         q1_o = a1_i;
+      end
+    endcase
+
+    casez (sel_i)
+      my_enum_two_e: begin
+        q4_o = b0_i;
+      end
+      3'h3: begin
+        q4_o = a0_i;
       end
     endcase
   end

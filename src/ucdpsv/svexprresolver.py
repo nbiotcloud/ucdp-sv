@@ -247,7 +247,7 @@ class SvExprResolver(u.ExprResolver):
             align.add_row((ident.name, f"{oper} {svvalue};"))
         return align
 
-    def get_assigns(self, assigns: u.Assigns, indent: int, oper: str = "") -> Align:
+    def get_assigns(self, assigns: u.Assigns, indent: int, oper: str = "") -> Align:  # noqa: C901
         """Get Systemverilog Continuous Assigns."""
         align = Align(rtrim=True, strip_empty_cols=True)
         pre = " " * indent
@@ -258,6 +258,8 @@ class SvExprResolver(u.ExprResolver):
                 source = assign.source
                 if source is not None:
                     source = self.resolve(source)
+                if source is None:
+                    source = self.get_value(assign.target)
                 direction = assign.target.direction
                 if direction in (u.OUT, u.FWD):
                     align.add_row((name, oper, f"{source};"))
@@ -383,7 +385,10 @@ class SvExprResolver(u.ExprResolver):
         for cond, assigns in conds.items():
             condstr = self._resolve(cond)
             is_range = isinstance(cond, u.RangeExpr)
-            is_default = default in cond.range_ if is_range else default == sel.type_.encode(cond)
+            try:
+                is_default = default in cond.range_ if is_range else default == sel.type_.encode(cond)
+            except ValueError:
+                is_default = False
             if is_default:
                 defaultcase = condstr, assigns
             elif is_range:
