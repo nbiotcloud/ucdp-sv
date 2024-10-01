@@ -360,3 +360,25 @@ endmodule // ${mod.modname}
 `default_nettype wire
 `end_keywords
 </%def>
+
+
+<%def name="head()">\
+// =============================================================================
+${self.copyright()}\
+// =============================================================================
+${self.fileheader()}\
+// =============================================================================
+
+${self.header()}\
+
+${self.beginmod()}\
+
+${self.logic(indent=2)}\
+
+</%def>
+
+<%def name="tail()">\
+${self.endmod()}\
+
+${self.footer()}\
+</%def>

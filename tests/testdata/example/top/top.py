@@ -27,6 +27,7 @@ import ucdp as u
 from fileliststandard import HdlFileList
 from glbl.bus import BusType
 from glbl.clk_gate import ClkGateMod
+from glbl.sync import SyncMod
 from ucdp_glbl.stream import StreamType
 
 
@@ -107,6 +108,9 @@ class TopMod(u.AMod):
 
         core.add_port(u.UintType(7), "nosuffix0", direction=u.IN)
         core.add_port(u.UintType(7), "nosuffix1", direction=u.OUT)
+
+        sync = SyncMod(self, "u_sync")
+        sync.con("main_i", "main_i")
 
         core.add_signal(u.UintType(width_p), "one_s")
         core.add_signal(u.UintType(width_p, logic=False), "two_s")

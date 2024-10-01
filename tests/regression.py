@@ -51,6 +51,7 @@ top_fl = [
     f"{prjroot}/tests/refdata/tests.test_svmako/test_top/glbl/clk_gate.sv",
     f"{prjroot}/tests/refdata/tests.test_svmako/test_top/top/top.sv",
     f"{prjroot}/tests/refdata/tests.test_svmako/test_top/top/top_core.sv",
+    f"{prjroot}/tests/refdata/tests.test_svmako/test_top/glbl/sync.sv",
 ]
 
 tests = [
