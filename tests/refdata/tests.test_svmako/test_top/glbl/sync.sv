@@ -1,5 +1,4 @@
 // GENERATE INPLACE BEGIN head() ===============================================
-// =============================================================================
 //
 //  MIT License
 //
@@ -54,7 +53,6 @@ module sync ( // glbl.sync.SyncMod
   localparam logic   [1:0] edge_pos_e     = 2'h1;
   localparam logic   [1:0] edge_neg_e     = 2'h2;
   localparam logic   [1:0] edge_default_p = 2'h0;
-
 // GENERATE INPLACE END head ===================================================
 
 

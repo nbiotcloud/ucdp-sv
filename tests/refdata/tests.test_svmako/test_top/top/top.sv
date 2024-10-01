@@ -187,3 +187,9 @@ endmodule // top
 
 `default_nettype wire
 `end_keywords
+
+// =============================================================================
+//
+// THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
+//
+// =============================================================================
