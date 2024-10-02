@@ -112,6 +112,8 @@ class TopMod(u.AMod):
         sync = SyncMod(self, "u_sync")
         sync.con("main_i", "main_i")
 
+        SyncMod(self, "u_sync1", virtual=True)
+
         core.add_signal(u.UintType(width_p), "one_s")
         core.add_signal(u.UintType(width_p, logic=False), "two_s")
         core.add_signal(u.IntegerType(), "integer_s")

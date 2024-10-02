@@ -187,9 +187,11 @@ ${align.get()}
 
 <%def name="insts(indent=0)">\
 % for modinst in mod.insts:
+%   if not modinst.virtual:
 
 
 ${inst(modinst, indent)}
+%   endif
 % endfor
 </%def>
 
