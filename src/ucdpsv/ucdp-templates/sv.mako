@@ -364,8 +364,7 @@ endmodule // ${mod.modname}
 </%def>
 
 
-<%def name="head()">\
-// =============================================================================
+<%def name="head(nologic=False)">\
 ${self.copyright()}\
 // =============================================================================
 ${self.fileheader()}\
@@ -375,8 +374,10 @@ ${self.header()}\
 
 ${self.beginmod()}\
 
+% if not nologic:
 ${self.logic(indent=2)}\
 
+% endif
 </%def>
 
 <%def name="tail()">\
