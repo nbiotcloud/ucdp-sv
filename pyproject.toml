@@ -24,7 +24,7 @@
 
 [project]
 name = "ucdp-sv"
-version = ["dynamic"]
+dynamic = ["version"]
 description = "Unified Chip Design Platform - System Verilog Support"
 readme = "README.md"
 authors = [
