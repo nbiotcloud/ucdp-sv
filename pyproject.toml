@@ -24,7 +24,7 @@
 
 [project]
 name = "ucdp-sv"
-version = "0.10.2"
+version = ["dynamic"]
 description = "Unified Chip Design Platform - System Verilog Support"
 readme = "README.md"
 authors = [
@@ -50,6 +50,9 @@ dependencies = [
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
+[tool.pdm.version]
+source = "scm"
 
 [tool.pdm]
 [tool.pdm.dev-dependencies]
