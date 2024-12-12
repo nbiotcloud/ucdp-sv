@@ -314,7 +314,7 @@ ${pre}  // defaults
 ${rslvr.get_assigns(mux.defaults(), indent=indent+2, oper="=").get()}
 %   for sel, conds in mux:
 
-${pre}  casez (${sel})
+${pre}  case (${sel}) inside
 <% cases, defaultcase = rslvr.split_mux_conds(sel, conds) %>\
 %     for cond, assigns in cases:
 ${pre}    ${cond}: begin
