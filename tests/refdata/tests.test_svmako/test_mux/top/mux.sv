@@ -82,7 +82,7 @@ module mux ( // top.mux.MuxMod
     q3_s = 4'h0;
     q4_o = 4'h0;
 
-    casez (sel_s)
+    case (sel_s) inside
       3'h1: begin
         q0_o = a0_i;
         q1_o = b1_i;
@@ -99,7 +99,7 @@ module mux ( // top.mux.MuxMod
       end
     endcase
 
-    casez (sel_i)
+    case (sel_i) inside
       my_enum_two_e: begin
         q4_o = b0_i;
       end
@@ -117,7 +117,7 @@ module mux ( // top.mux.MuxMod
     // defaults
     q2_o = 8'h00;
 
-    casez (sel_s)
+    case (sel_s) inside
       3'h1: begin
         q2_o = a1_i;
       end
