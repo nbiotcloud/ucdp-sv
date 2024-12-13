@@ -5,7 +5,7 @@
 groups = ["default", "checktypes", "doc", "format", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:629b29753380e0506c96b40cb8c5ab469bc321449574b64341796d110456e5b9"
+content_hash = "sha256:3e43b72b26257fc13f0f1718e360bfe562e8e347e470dc6f991a6a54538d2f96"
 
 [[metadata.targets]]
 requires_python = ">=3.10.0,<4.0"
@@ -657,20 +657,20 @@ files = [
 
 [[package]]
 name = "makolator"
-version = "2.7.1"
-requires_python = "<4.0.0,>=3.8.2"
-summary = "Extended Mako Templates for Python"
+version = "2.9.1"
+requires_python = "<4.0,>=3.10.0"
+summary = "Extended Mako Templates for Python."
 groups = ["default", "test"]
 dependencies = [
-    "aligntext<2.0.0,>=1.0.0",
-    "attrs<24.0.0,>=23.1.0",
-    "mako<2.0.0,>=1.2.4",
-    "outputfile<0.3.0,>=0.2.0",
-    "uniquer<2.0.0,>=1.0.0",
+    "aligntext>=1.0.0",
+    "attrs>=23.1.0",
+    "mako>=1.2.4",
+    "outputfile>=0.2.0",
+    "uniquer>=1.0.0",
 ]
 files = [
-    {file = "makolator-2.7.1-py3-none-any.whl", hash = "sha256:9763f696af3f0807d462311f273ffd7fce1f9d68452406651d76d4e89363311c"},
-    {file = "makolator-2.7.1.tar.gz", hash = "sha256:713e881803e38526b28a097114f42773cc5bf398c12606faf3a24b8d8d227297"},
+    {file = "makolator-2.9.1-py3-none-any.whl", hash = "sha256:cef461f376c3b900d4d9c1e67a128af508e066d619b75636d5939948256e700e"},
+    {file = "makolator-2.9.1.tar.gz", hash = "sha256:7326bce3c9935fa918919b99ea321748aa58ba2ebff6915985a1a4364250ae1a"},
 ]
 
 [[package]]

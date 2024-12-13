@@ -40,6 +40,7 @@ requires-python = ">=3.10.0,<4.0"
 dependencies = [
     "aligntext>=1.0.0",
     "ucdp>=0.11.0",
+    "makolator>=2.9.1",
 ]
 
 [project.urls]
