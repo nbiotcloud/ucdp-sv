@@ -189,6 +189,7 @@ endmodule // top
 
 `default_nettype wire
 `end_keywords
+
 // =============================================================================
 //
 //   @generated

@@ -94,6 +94,7 @@ endmodule // top_core
 
 `default_nettype wire
 `end_keywords
+
 // =============================================================================
 //
 //   @generated
