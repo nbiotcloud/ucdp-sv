@@ -25,9 +25,11 @@
 """Unified Chip Design Platform - SystemVerilog Support."""
 
 from .svexprresolver import SvDecl, SvExprResolver, get_resolver
+from .svimporter import import_params_ports
 
 __all__ = [
     "SvDecl",
     "SvExprResolver",
     "get_resolver",
+    "import_params_ports",
 ]
