@@ -5,7 +5,7 @@
 groups = ["default", "checktypes", "doc", "format", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:3e43b72b26257fc13f0f1718e360bfe562e8e347e470dc6f991a6a54538d2f96"
+content_hash = "sha256:c48901d76db9f857d1466a52f5f34d7ed8bc0386063eabf6f92c62d573ae998d"
 
 [[metadata.targets]]
 requires_python = ">=3.10.0,<4.0"
@@ -571,7 +571,7 @@ name = "jinja2"
 version = "3.1.4"
 requires_python = ">=3.7"
 summary = "A very fast and expressive template engine."
-groups = ["doc"]
+groups = ["default", "doc"]
 dependencies = [
     "MarkupSafe>=2.0",
 ]
@@ -1047,6 +1047,16 @@ files = [
 ]
 
 [[package]]
+name = "pathlib"
+version = "1.0.1"
+summary = "Object-oriented filesystem paths"
+groups = ["default"]
+files = [
+    {file = "pathlib-1.0.1-py3-none-any.whl", hash = "sha256:f35f95ab8b0f59e6d354090350b44a80a80635d22efdedfa84c7ad1cf0a74147"},
+    {file = "pathlib-1.0.1.tar.gz", hash = "sha256:6940718dfc3eff4258203ad5021090933e5c04707d5ca8cc9e73c94a7894ea9f"},
+]
+
+[[package]]
 name = "pathspec"
 version = "0.12.1"
 requires_python = ">=3.8"
@@ -1488,6 +1498,21 @@ groups = ["default", "doc", "test"]
 files = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+
+[[package]]
+name = "sv-simpleparser"
+version = "0.0.7"
+summary = "A simple SystemVerilog parser"
+groups = ["default"]
+dependencies = [
+    "Jinja2",
+    "click",
+    "pathlib",
+]
+files = [
+    {file = "sv_simpleparser-0.0.7-py3-none-any.whl", hash = "sha256:0b813e5887f64aceb35a43ef8efbebb1466e70c6205f463934884dca81563c3b"},
+    {file = "sv_simpleparser-0.0.7.tar.gz", hash = "sha256:f4d6305fb8c78d42b7a204b685dfe65927463a34bb19c76ecd7b103c93f554a7"},
 ]
 
 [[package]]
