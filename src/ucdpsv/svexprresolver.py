@@ -143,7 +143,7 @@ class SvExprResolver(u.ExprResolver):
             name = ident.name
             svdims = self.get_dims(ident.type_)
             svdefault = self.get_default(ident.type_)
-            svcomment = _get_comment(ident.doc.comment)
+            svcomment = _get_comment(ident.doc.comment_or_title)
             svdefault = f"{svdefault}{svsep}"
             align.add_row((keyword, *svdecl, name, svdims, "=", svdefault, svcomment))
         return align
@@ -186,7 +186,7 @@ class SvExprResolver(u.ExprResolver):
                 svdims = f"{svdims}{svsep}"
             else:
                 name = f"{name}{svsep}"
-            svcomment = _get_comment(ident.doc.comment)
+            svcomment = _get_comment(ident.doc.comment_or_title)
             if ports:
                 align.add_row((*_get_port_decl(ident, svdecl), name, svdims, svcomment))
             else:
@@ -206,7 +206,7 @@ class SvExprResolver(u.ExprResolver):
         for ident, _, svsep in self._iter_idents(align, pre, leveliter, ",", is_last):
             name = f".{ident.name}"
             expr = self.get_value(ident)
-            svcomment = _get_comment(ident.doc.comment, pre=" ")
+            svcomment = _get_comment(ident.doc.comment_or_title, pre=" ")
             align.add_row(name, expr, svsep, svcomment)
         return align
 
@@ -242,7 +242,7 @@ class SvExprResolver(u.ExprResolver):
                 source = f"/* {source.note} */"
             else:
                 source = self.resolve(source)
-            comments.append(target.doc.comment)
+            comments.append(target.doc.comment_or_title)
             svcomment = _get_comment(u.join_names(*comments, concat=" - "), pre=" ")
             align.add_row(f".{assign.name}", source, svsep, svcomment)
         return align
@@ -447,7 +447,7 @@ def _add_declcomment(align: Align, level: int | None, ident: u.Ident | u.Assign,
         return None
     if svdecl is None:
         name = ident.name
-        comment = ident.doc.comment or ""
+        comment = ident.doc.comment_or_title or ""
         if name and comment:
             comment = f"{name}: {comment}"
         else:

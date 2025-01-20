@@ -43,8 +43,8 @@ module top #( // top.top.TopMod
   parameter integer               width_p   = $clog2(param_p + 1),
   parameter logic   [param_p-1:0] default_p = {param_p {1'b0}}
 ) (
-  // main_i
-  input  wire                main_clk_i,
+  // main_i: Clock and Reset
+  input  wire                main_clk_i,    // Clock
   input  wire                main_rst_an_i, // Async Reset (Low-Active)
   // intf_i: RX/TX
   output logic               intf_rx_o,
@@ -92,7 +92,7 @@ module top #( // top.top.TopMod
   logic [8:0]         key_data_s;
   // -
   logic [3:0]         bidir_s;
-  logic               clk_s;
+  logic               clk_s;                       // Clock
   logic [7:0]         array_s       [0:param_p-1];
   logic [8:0]         data_r;
   logic [param_p-1:0] data2_r;
@@ -102,9 +102,9 @@ module top #( // top.top.TopMod
   //  glbl.clk_gate: u_clk_gate
   // ------------------------------------------------------
   clk_gate u_clk_gate (
-    .clk_i(main_clk_i),
-    .clk_o(clk_s     ),
-    .ena_i(1'b0      )  // TODO
+    .clk_i(main_clk_i), // Clock
+    .clk_o(clk_s     ), // Clock
+    .ena_i(1'b0      )  // TODO - Enable
   );
 
 
@@ -115,7 +115,7 @@ module top #( // top.top.TopMod
     .param_p(10            ),
     .width_p($clog2(10 + 1))
   ) u_core (
-    .main_clk_i   (clk_s             ),
+    .main_clk_i   (clk_s             ), // Clock
     .main_rst_an_i(main_rst_an_i     ), // Async Reset (Low-Active)
     .p_i          ({10 {1'b0}}       ), // TODO
     .p_o          (                  ), // TODO
@@ -152,7 +152,7 @@ module top #( // top.top.TopMod
   //  glbl.sync: u_sync
   // ------------------------------------------------------
   sync u_sync (
-    .main_clk_i   (main_clk_i   ),
+    .main_clk_i   (main_clk_i   ), // Clock
     .main_rst_an_i(main_rst_an_i), // Async Reset (Low-Active)
     .data_i       (1'b0         ), // TODO
     .data_o       (             )  // TODO

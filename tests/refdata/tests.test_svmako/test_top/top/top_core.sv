@@ -43,8 +43,8 @@ module top_core #( // top.top.TopCoreMod
   parameter integer            width_p = 8,
   parameter logic signed [7:0] other_p = 8'shFD
 ) (
-  // main_i
-  input  wire                 main_clk_i,
+  // main_i: Clock and Reset
+  input  wire                 main_clk_i,                        // Clock
   input  wire                 main_rst_an_i,                     // Async Reset (Low-Active)
   // -
   input  wire   [param_p-1:0] p_i,
