@@ -57,9 +57,9 @@ module top_core #( // top.top.TopCoreMod
   input  wire   [2:0]         some_i,
   input  wire   [1:0]         bits_i,
   // key_i
-  input  wire                 key_valid_i,
-  output logic                key_accept_o,
-  input  wire   [8:0]         key_data_i,
+  input  wire                 key_valid_i,                       // clk: main_clk_i
+  output logic                key_accept_o,                      // clk: main_clk_i
+  input  wire   [8:0]         key_data_i,                        // clk: main_clk_i
   // -
   input  wire                 open_rail_i,
   input  string               open_string_i,
@@ -76,7 +76,7 @@ module top_core #( // top.top.TopCoreMod
   input  wire   [7:0]         array_i        [0:param_p-1],
   input  wire   [7:0]         array_open_i   [0:7],
   // intf_i: RX/TX
-  output logic                intf_rx_o,
+  output logic                intf_rx_o,                         // RX
   input  wire                 intf_tx_i
 );
 

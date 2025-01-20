@@ -186,7 +186,14 @@ class SvExprResolver(u.ExprResolver):
                 svdims = f"{svdims}{svsep}"
             else:
                 name = f"{name}{svsep}"
-            svcomment = _get_comment(ident.doc.comment_or_title)
+            comments = [ident.doc.comment_or_title]
+            try:
+                clkrel = ident.clkrel
+                if clkrel:
+                    comments.insert(0, clkrel.info)
+            except AttributeError:
+                pass
+            svcomment = _get_comment(u.join_names(*comments, concat=" - "))
             if ports:
                 align.add_row((*_get_port_decl(ident, svdecl), name, svdims, svcomment))
             else:
@@ -242,6 +249,8 @@ class SvExprResolver(u.ExprResolver):
                 source = f"/* {source.note} */"
             else:
                 source = self.resolve(source)
+            if target.clkrel:
+                comments.append(target.clkrel.info)
             comments.append(target.doc.comment_or_title)
             svcomment = _get_comment(u.join_names(*comments, concat=" - "), pre=" ")
             align.add_row(f".{assign.name}", source, svsep, svcomment)
