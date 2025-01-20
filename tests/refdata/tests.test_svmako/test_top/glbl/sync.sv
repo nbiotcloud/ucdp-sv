@@ -33,8 +33,8 @@
 `default_nettype none  // implicit wires are forbidden
 
 module sync ( // glbl.sync.SyncMod
-  // main_i
-  input  wire  main_clk_i,
+  // main_i: Clock and Reset
+  input  wire  main_clk_i,    // Clock
   input  wire  main_rst_an_i, // Async Reset (Low-Active)
   input  wire  data_i,
   output logic data_o
@@ -46,13 +46,13 @@ module sync ( // glbl.sync.SyncMod
   //  Local Parameter
   // ------------------------------------------------------
   // edge
-  localparam integer       edge_width_p   = 2;
-  localparam logic   [1:0] edge_min_p     = 2'h0;
-  localparam logic   [1:0] edge_max_p     = 2'h3;
+  localparam integer       edge_width_p   = 2;    // Width in Bits
+  localparam logic   [1:0] edge_min_p     = 2'h0; // Minimal Value
+  localparam logic   [1:0] edge_max_p     = 2'h3; // Maximal Value
   localparam logic   [1:0] edge_no_e      = 2'h0;
   localparam logic   [1:0] edge_pos_e     = 2'h1;
   localparam logic   [1:0] edge_neg_e     = 2'h2;
-  localparam logic   [1:0] edge_default_p = 2'h0;
+  localparam logic   [1:0] edge_default_p = 2'h0; // Default Value
 
 // GENERATE INPLACE END head ===================================================
 
