@@ -1,6 +1,6 @@
 // =============================================================================
 //
-//   @generated
+//   @generated @fully-generated
 //
 //   THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
 //
@@ -46,6 +46,7 @@ module top_core #( // top.top.TopCoreMod
   // main_i
   input  wire                 main_clk_i,
   input  wire                 main_rst_an_i,                     // Async Reset (Low-Active)
+  // -
   input  wire   [param_p-1:0] p_i,
   output logic  [param_p-1:0] p_o,
   input  bit    [width_p-1:0] data_i,
@@ -59,6 +60,7 @@ module top_core #( // top.top.TopCoreMod
   input  wire                 key_valid_i,
   output logic                key_accept_o,
   input  wire   [8:0]         key_data_i,
+  // -
   input  wire                 open_rail_i,
   input  string               open_string_i,
   input  wire   [5:0]         open_array_i   [3:0],
@@ -97,7 +99,7 @@ endmodule // top_core
 
 // =============================================================================
 //
-//   @generated
+//   @generated @fully-generated
 //
 //   THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
 //

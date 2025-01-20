@@ -1,6 +1,6 @@
 // =============================================================================
 //
-//   @generated
+//   @generated @fully-generated
 //
 //   THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
 //
@@ -142,7 +142,7 @@ endmodule // mux
 
 // =============================================================================
 //
-//   @generated
+//   @generated @fully-generated
 //
 //   THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
 //

@@ -36,6 +36,7 @@ module sync ( // glbl.sync.SyncMod
   // main_i
   input  wire  main_clk_i,
   input  wire  main_rst_an_i, // Async Reset (Low-Active)
+  // -
   input  wire  data_i,
   output logic data_o
 );

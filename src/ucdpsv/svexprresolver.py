@@ -25,7 +25,7 @@
 """SystemVerilog Expression Resolver."""
 
 from collections.abc import Iterable, Iterator
-from typing import ClassVar, Literal
+from typing import ClassVar, Literal, TypeAlias
 
 import ucdp as u
 from aligntext import Align
@@ -51,6 +51,9 @@ def _is_param(ident: u.Ident) -> bool:
 
 def _is_const(ident: u.Ident) -> bool:
     return isinstance(ident, u.Const)
+
+
+LevelIter: TypeAlias = Iterator[tuple[int | None, u.Ident | u.Assign]]
 
 
 class SvExprResolver(u.ExprResolver):
@@ -126,17 +129,17 @@ class SvExprResolver(u.ExprResolver):
 
     def get_paramdecls(self, idents: u.Idents, is_last: bool = True, indent: int = 0) -> Align:
         """Return `Align` With Parameter Declarations."""
-        return self._get_paramdecls(idents.iter(filter_=_is_param), "parameter", ",", is_last, indent)
+        return self._get_paramdecls(idents.leveliter(filter_=_is_param), "parameter", ",", is_last, indent)
 
     def get_localparamdecls(self, idents: u.Idents, indent: int = 0) -> Align:
         """Return `Align` With Local Parameter Declarations."""
-        return self._get_paramdecls(idents.iter(filter_=_is_const), "localparam", ";", False, indent)
+        return self._get_paramdecls(idents.leveliter(filter_=_is_const), "localparam", ";", False, indent)
 
-    def _get_paramdecls(self, iterator: Iterable[u.Ident], keyword: str, sep: str, is_last: bool, indent: int) -> Align:
+    def _get_paramdecls(self, leveliter: LevelIter, keyword: str, sep: str, is_last: bool, indent: int) -> Align:
         align = Align(rtrim=True, strip_empty_cols=True)
         pre = " " * indent
         align.set_separators(" ", first=pre)
-        for ident, svdecl, svsep in self._iter_idents(align, pre, iterator, sep, is_last):
+        for ident, svdecl, svsep in self._iter_idents(align, pre, leveliter, sep, is_last):
             name = ident.name
             svdims = self.get_dims(ident.type_)
             svdefault = self.get_default(ident.type_)
@@ -149,7 +152,9 @@ class SvExprResolver(u.ExprResolver):
         self, ports: u.Idents, is_last: bool = True, indent: int = 0, wirenames: u.Names | None = None
     ) -> Align:
         """Return `Align` With Port Declarations."""
-        return self._get_signaldecls(ports.iter(), ",", is_last=is_last, indent=indent, wirenames=wirenames, ports=True)
+        return self._get_signaldecls(
+            ports.leveliter(), ",", is_last=is_last, indent=indent, wirenames=wirenames, ports=True
+        )
 
     def get_signaldecls(self, signals: u.Idents, indent: int = 0, wirenames: u.Names | None = None) -> Align:
         """Return `Align` With Signal Declarations."""
@@ -157,11 +162,13 @@ class SvExprResolver(u.ExprResolver):
         def stop(signal):
             return isinstance(signal, u.Port)
 
-        return self._get_signaldecls(signals.iter(stop=stop), ";", is_last=False, indent=indent, wirenames=wirenames)
+        return self._get_signaldecls(
+            signals.leveliter(stop=stop), ";", is_last=False, indent=indent, wirenames=wirenames
+        )
 
     def _get_signaldecls(
         self,
-        iterator: Iterable[u.Ident],
+        leveliter: LevelIter,
         sep: str,
         is_last: bool,
         indent: int,
@@ -172,7 +179,7 @@ class SvExprResolver(u.ExprResolver):
         pre = " " * indent
         align.set_separators(" ", first=pre)
         wirenames = u.split(wirenames)
-        for ident, svdecl, svsep in self._iter_idents(align, pre, iterator, sep, is_last):
+        for ident, svdecl, svsep in self._iter_idents(align, pre, leveliter, sep, is_last):
             name = ident.name
             svdims = self.get_dims(ident.type_)
             if svdims:
@@ -195,7 +202,8 @@ class SvExprResolver(u.ExprResolver):
         def filter_(ident):
             return isinstance(ident, u.Param) and ident.value is not None
 
-        for ident, _, svsep in self._iter_idents(align, pre, mod.namespace.iter(filter_=filter_), ",", is_last):
+        leveliter: LevelIter = ((None, ident) for ident in mod.namespace.iter(filter_=filter_))
+        for ident, _, svsep in self._iter_idents(align, pre, leveliter, ",", is_last):
             name = f".{ident.name}"
             expr = self.get_value(ident)
             svcomment = _get_comment(ident.doc.comment, pre=" ")
@@ -211,9 +219,11 @@ class SvExprResolver(u.ExprResolver):
         align.set_separators("(", ")", "", first=pre)
         skips = u.split(skips)
         if skips:
-            instconstiter = instcons.iter(filter_=lambda ident: not matchs(ident.name, skips))
+            instconstiter = (
+                (None, inst) for inst in instcons.iter(filter_=lambda ident: not matchs(ident.name, skips))
+            )
         else:
-            instconstiter = instcons.iter()
+            instconstiter = ((None, inst) for inst in instcons.iter())
 
         for assign, _, svsep in self._iter_idents(align, pre, instconstiter, ",", is_last):
             target = assign.target
@@ -242,7 +252,8 @@ class SvExprResolver(u.ExprResolver):
         align = Align(rtrim=True, strip_empty_cols=True)
         pre = " " * indent
         align.set_separators(" ", first=pre)
-        for ident, _, _ in self._iter_idents(align, pre, assigns):
+        levelassigns: LevelIter = ((0, assign) for assign in assigns)
+        for ident, _, _ in self._iter_idents(align, pre, levelassigns):
             svvalue = self.get_value(ident)
             align.add_row((ident.name, f"{oper} {svvalue};"))
         return align
@@ -252,8 +263,9 @@ class SvExprResolver(u.ExprResolver):
         align = Align(rtrim=True, strip_empty_cols=True)
         pre = " " * indent
         align.set_separators(" ", first=pre)
+        levelassigns: LevelIter = ((None, assign) for assign in assigns)
         if oper:
-            for assign, _, _ in self._iter_idents(align, pre, assigns):
+            for assign, _, _ in self._iter_idents(align, pre, levelassigns):
                 name = assign.target.name
                 source = assign.source
                 if source is not None:
@@ -266,7 +278,7 @@ class SvExprResolver(u.ExprResolver):
                 elif direction in (u.IN, u.BWD):
                     align.add_row((source, oper, f"{name};"))
         else:
-            for assign, _, _ in self._iter_idents(align, pre, assigns):
+            for assign, _, _ in self._iter_idents(align, pre, levelassigns):
                 name = assign.target.name
                 source = assign.source
                 if source is not None:
@@ -336,29 +348,29 @@ class SvExprResolver(u.ExprResolver):
         return self._resolve_value(ident.type_, value=getattr(ident, "value", None))
 
     def _iter_idents(
-        self, align: Align, pre: str, idents: Iterable[u.Ident | u.Assign], sep: str = ";", is_last: bool = False
+        self, align: Align, pre: str, leveliter: LevelIter, sep: str = ";", is_last: bool = False
     ) -> Iterator[tuple[u.Ident, SvDecl, str]]:
-        decls = [(ident, self.get_decl(ident.type_)) for ident in idents]
+        decls = [(level, ident, self.get_decl(ident.type_)) for level, ident in leveliter]
         nosepmap = _get_nosepmap(decls) if is_last else {}
-        pendlevel = None
+        pendlevel: int | None = None
         ifdef = None
         ended = False
         # Iterate over all identifier and their declarations
-        for ident, svdecl in decls:
+        for level, ident, svdecl in decls:
             # emit ifdef, even if empty
             ifdef = _add_ifdef(pre, align, ifdef, ident.ifdef)
             if svdecl is not None:
                 if ended:
                     align.add_spacer(f"{pre}{sep}")
                     ended = False
-                pendlevel = _add_declcomment(align, ident, pendlevel, svdecl, pre)
+                pendlevel = _add_declcomment(align, level, ident, pendlevel, svdecl, pre)
                 if is_last and nosepmap.get(ident.ifdef, None) == ident.name:
                     yield ident, svdecl, ""
                     ended = True
                 else:
                     yield ident, svdecl, sep
             else:
-                pendlevel = _add_declcomment(align, ident, pendlevel, svdecl, pre)
+                pendlevel = _add_declcomment(align, level, ident, pendlevel, svdecl, pre)
         _add_ifdef(pre, align, ifdef)
 
     def get_ident_expr(self, type_: u.BaseScalarType, name: str, op: Literal[None, 0, 1, "", "~"]) -> str | None:
@@ -408,10 +420,10 @@ def _get_comment(comment, level=0, pre="") -> str:
     return ""
 
 
-def _get_nosepmap(decls: Iterable[tuple[u.Ident, SvDecl | None]]) -> dict[str, str]:
+def _get_nosepmap(decls: Iterable[tuple[int, u.Ident, SvDecl | None]]) -> dict[str, str]:
     """Create Auxiliary Structure To Determine Proper Commas."""
     nosepmap: dict[str, str] = {}
-    for ident, svdecl in decls:
+    for _, ident, svdecl in decls:
         if svdecl is not None:
             if not ident.ifdef:
                 nosepmap.clear()
@@ -429,8 +441,10 @@ def _add_ifdef(pre: str, align: Align, act: str | None, ifdef: str | None = None
     return ifdef
 
 
-def _add_declcomment(align: Align, ident: u.Ident | u.Assign, pendlevel, svdecl, pre):
+def _add_declcomment(align: Align, level: int | None, ident: u.Ident | u.Assign, pendlevel: int | None, svdecl, pre):
     """Add Struct Declaration Comments ."""
+    if level is None:
+        return None
     if svdecl is None:
         name = ident.name
         comment = ident.doc.comment or ""
@@ -438,9 +452,13 @@ def _add_declcomment(align: Align, ident: u.Ident | u.Assign, pendlevel, svdecl,
             comment = f"{name}: {comment}"
         else:
             comment = f"{name}{comment}"
-        align.add_spacer(_get_comment(comment, pre=pre))
-        return 0
-    return None
+        if comment:
+            align.add_spacer(_get_comment(comment, level=level, pre=pre))
+            return level
+    if pendlevel is not None and pendlevel >= level:
+        align.add_spacer(_get_comment("-", level=pendlevel, pre=pre))
+        return None
+    return pendlevel
 
 
 def _get_port_decl(ident: u.Ident, svdecl: SvDecl) -> tuple[str, str, str]:
