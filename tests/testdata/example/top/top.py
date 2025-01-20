@@ -38,7 +38,7 @@ class IoType(u.AStructType):
     comment: str = "RX/TX"
 
     def _build(self) -> None:
-        self._add("rx", u.BitType(), u.BWD)
+        self._add("rx", u.BitType(), u.BWD, title="RX")
         self._add("tx", u.BitType(), u.FWD)
 
 
@@ -55,14 +55,14 @@ class TopMod(u.AMod):
         default_p = self.add_param(u.UintType(param_p), "default_p")
 
         self.add_port(u.ClkRstAnType(), "main_i")
-        self.add_port(IoType(), "intf_i", route="create(u_core/intf_i)")
-        self.add_port(BusType(), "bus_i")
+        self.add_port(IoType(), "intf_i", route="create(u_core/intf_i)", clkrel=u.ASYNC)
+        self.add_port(BusType(), "bus_i", clkrel="main_clk_i")
 
         self.add_port(u.UintType(9), "brick_o", ifdef="ASIC")
 
         self.add_port(u.UintType(param_p), "data_i")
         self.add_port(u.UintType(width_p), "cnt_o")
-        self.add_port(StreamType(9), "key_i")
+        self.add_port(StreamType(9), "key_i", clkrel="main_clk_i")
         self.add_port(u.UintType(4), "bidir_io")
 
         self.add_port(u.UintType(9), "value_o", ifdef="ASIC")
@@ -90,7 +90,8 @@ class TopMod(u.AMod):
         core.add_port(u.UintType(3), "some_i")
         core.add_port(u.UintType(2), "bits_i")
 
-        core.add_port(StreamType(9), "key_i")
+        core.add_port(StreamType(9), "key_i", clkrel="main_clk_i")
+        core.con("key_i", "key_i")
 
         # open inputs/output
         core.add_port(u.RailType(), "open_rail_i")
