@@ -58,13 +58,13 @@ module mux ( // top.mux.MuxMod
   //  Local Parameter
   // ------------------------------------------------------
   // my_enum
-  localparam integer       my_enum_width_p   = 3;
-  localparam logic   [2:0] my_enum_min_p     = 3'h0;
-  localparam logic   [2:0] my_enum_max_p     = 3'h7;
+  localparam integer       my_enum_width_p   = 3;    // Width in Bits
+  localparam logic   [2:0] my_enum_min_p     = 3'h0; // Minimal Value
+  localparam logic   [2:0] my_enum_max_p     = 3'h7; // Maximal Value
   localparam logic   [2:0] my_enum_one_e     = 3'h0;
   localparam logic   [2:0] my_enum_two_e     = 3'h1;
   localparam logic   [2:0] my_enum_three_e   = 3'h2;
-  localparam logic   [2:0] my_enum_default_p = 3'h0;
+  localparam logic   [2:0] my_enum_default_p = 3'h0; // Default Value
 
 
   // ------------------------------------------------------
