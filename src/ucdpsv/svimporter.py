@@ -26,8 +26,10 @@
 
 import re
 from collections.abc import Sequence
+from typing import Any, TypeAlias
 
 import ucdp as u
+from matchor import is_pattern, matchsp
 from sv_simpleparser._sv_parser import parse_sv
 
 _RE_WIDTH = re.compile(r"\[([^\:]+?)(\-1)?\:([^\]+])\]")
@@ -37,9 +39,44 @@ DIRMAP = {
     "inout": u.INOUT,
 }
 
+Attrs: TypeAlias = dict[str, dict[str, Any]]
 
-def import_params_ports(mod: u.BaseMod, nodefault=False, filelistname="hdl"):
+
+def import_params_ports(
+    mod: u.BaseMod,
+    filelistname: str = "hdl",
+    paramattrs: Attrs | None = None,
+    portattrs: Attrs | None = None,
+):
     """Import Parameter and Ports."""
+    module = _find_module(mod, filelistname=filelistname)
+
+    paramattrs_ = _preprocess_attrs(paramattrs)
+    portattrs_ = _preprocess_attrs(portattrs)
+
+    ifdef = None
+    for param in module.param_decl:
+        name = param.name[0]
+        attrs = _get_attrs(paramattrs_, name)
+        attrs.setdefault("type_", _get_type(mod.params, param.ptype or "", param.width or ""))
+        attrs.setdefault("ifdef", ifdef)
+        type_ = attrs.pop("type_")
+        mod.add_param(type_, name, **attrs)
+        ifdef = _handle_ifdef(attrs["ifdef"], param.name)
+
+    ifdef = None
+    for port in module.port_decl:
+        name = port.name[0]
+        attrs = _get_attrs(portattrs_, name)
+        attrs.setdefault("type_", _get_type(mod.params, port.ptype or "", port.width or ""))
+        attrs.setdefault("direction", DIRMAP[port.direction])
+        attrs.setdefault("ifdef", ifdef)
+        type_ = attrs.pop("type_")
+        mod.add_port(type_, name, **attrs)
+        ifdef = _handle_ifdef(attrs["ifdef"], port.name)
+
+
+def _find_module(mod: u.BaseMod, filelistname: str):
     modfilelist = u.resolve_modfilelist(mod, filelistname, replace_envvars=True)
     if not modfilelist:
         raise ValueError(f"No filelist {filelistname!r} found.")
@@ -52,23 +89,29 @@ def import_params_ports(mod: u.BaseMod, nodefault=False, filelistname="hdl"):
     modules = parse_sv(filepath)
 
     try:
-        module = modules[0]
+        return modules[0]
     except IndexError:
         raise ValueError(f"{str(filepath)!r} does not contain SystemVerilog modules") from None
 
-    ifdef = None
-    for param in module.param_decl:
-        name = param.name[0]
-        type_ = _get_type(mod.params, param.ptype or "", param.width or "")
-        mod.add_param(type_, name, ifdef=ifdef)
-        ifdef = _handle_ifdef(ifdef, param.name)
 
-    ifdef = None
-    for port in module.port_decl:
-        name = port.name[0]
-        type_ = _get_type(mod.params, port.ptype or "", port.width or "")
-        mod.add_port(type_, name, direction=DIRMAP[port.direction], ifdef=ifdef)
-        ifdef = _handle_ifdef(ifdef, port.name)
+def _preprocess_attrs(attrs: Attrs | None) -> tuple[Attrs, Attrs]:
+    if not attrs:
+        return {}, {}
+    patts = {key: value for key, value in attrs.items() if is_pattern(key)}
+    names = {key: value for key, value in attrs.items() if not is_pattern(key)}
+    return patts, names
+
+
+def _get_attrs(attrs: tuple[Attrs, Attrs], name: str) -> dict[str, Any]:
+    patts, names = attrs
+    try:
+        return names.pop(name)
+    except KeyError:
+        pass
+    key = matchsp(name, patts)
+    if key:
+        return patts[key]
+    return {}
 
 
 def _get_type(namespace: u.Namespace, ptype: str, width: str) -> u.BaseType:
