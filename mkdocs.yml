@@ -1,8 +1,7 @@
-site_name: UCDP-SV
-site_description: Unified Chip Design Platform
+site_name: "UCDP-SV"
+site_description: "Unified Chip Design Platform - System Verilog Support"
 site_url: https://ucdp-sv.readthedocs.io/en
 repo_url: https://github.com/nbiotcloud/ucdp-sv
-#strict: true
 copyright: Copyright (c) 2024 nbiotcloud
 
 theme:
@@ -27,9 +26,11 @@ theme:
     - content.code.annotate
 
 nav:
-  - Get Started:
-    - Welcome to UCDP-SV: index.md
-    - Contributing: contributing.md
+  - Home:
+      - Welcome to UCDP-SV: index.md
+      - Contributing: contributing.md
+  - API:
+      - Overview: api.md
 
 plugins:
   - search
