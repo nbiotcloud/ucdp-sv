@@ -66,10 +66,12 @@ ${u.get_copyright(obj or mod) | comment}
 </%def>\
 
 <%def name="fileheader()">\
-<% overview = mod.get_overview() %>\
+<%
+overview = mod.get_overview()
+%>\
 //
 // Module:     ${mod.libname}.${mod.modname}
-// Data Model: ${mod.get_modref()}
+// Data Model: ${mod.get_modref()} in ${u.modutil.get_file(mod.__class__, basedir=output_filepath.parent)}
 //
 % if overview:
 //
@@ -93,7 +95,7 @@ ports = rslvr.get_portdecls(mod.ports, wirenames=wirenames, indent=2)
 %>\
 module ${mod.modname}\
 % if params:
- #( // ${mod.get_modref()}
+ #(
 ${params.get()}
 )\
 % endif
@@ -101,7 +103,7 @@ ${params.get()}
 %   if params:
  (
 %   else:
- ( // ${mod.get_modref()}
+ (
 %   endif
 ${ports.get()}
 )\
@@ -394,4 +396,15 @@ ${self.logic(indent=2)}\
 ${self.endmod()}\
 
 ${self.footer()}\
+</%def>
+
+
+<%def name="create_inplace()">\
+// GENERATE INPLACE BEGIN head()
+// GENERATE INPLACE END head
+
+// Add your hand-written code here - remove this line afterwards
+
+// GENERATE INPLACE BEGIN tail()
+// GENERATE INPLACE END tail
 </%def>

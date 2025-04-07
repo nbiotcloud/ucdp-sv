@@ -31,14 +31,14 @@
 // =============================================================================
 //
 // Module:     top.mux
-// Data Model: top.mux.MuxMod
+// Data Model: top.mux.MuxMod in top/mux.py
 //
 // =============================================================================
 
 `begin_keywords "1800-2009"
 `default_nettype none  // implicit wires are forbidden
 
-module mux ( // top.mux.MuxMod
+module mux (
   input  wire  [3:0] a0_i,
   input  wire  [3:0] b0_i,
   input  wire  [3:0] c0_i,

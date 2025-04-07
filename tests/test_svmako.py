@@ -41,6 +41,16 @@ def test_top(example, tmp_path):
     assert_refdata(test_top, tmp_path)
 
 
+def test_top_create(example, tmp_path):
+    """Top Module."""
+    copytree(example / "src", tmp_path, dirs_exist_ok=True)
+    top = u.load("top.top")
+    with mock.patch.dict(os.environ, {"PRJ": str(tmp_path)}):
+        u.generate(top.mod, "hdl", create=True)
+
+    assert_refdata(test_top_create, tmp_path)
+
+
 def test_mux(example, tmp_path):
     """Top Module."""
     copytree(example / "src", tmp_path, dirs_exist_ok=True)
