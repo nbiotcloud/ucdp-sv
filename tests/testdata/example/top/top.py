@@ -145,4 +145,4 @@ class TopMod(u.AMod):
 class TopCoreMod(u.ACoreMod):
     """Core Module."""
 
-    filelists: u.ClassVar[u.ModFileLists] = (HdlFileList(gen="full"),)
+    filelists: u.ClassVar[u.ModFileLists] = (HdlFileList(gen="inplace"),)

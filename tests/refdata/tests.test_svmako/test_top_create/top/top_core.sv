@@ -1,10 +1,4 @@
-// =============================================================================
-//
-//   @generated @fully-generated
-//
-//   THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
-//
-// =============================================================================
+// GENERATE INPLACE BEGIN head() ===============================================
 //
 //  MIT License
 //
@@ -31,14 +25,14 @@
 // =============================================================================
 //
 // Module:     top.top_core
-// Data Model: top.top.TopCoreMod
+// Data Model: top.top.TopCoreMod in top/top.py
 //
 // =============================================================================
 
 `begin_keywords "1800-2009"
 `default_nettype none  // implicit wires are forbidden
 
-module top_core #( // top.top.TopCoreMod
+module top_core #(
   parameter integer            param_p = 10,
   parameter integer            width_p = 8,
   parameter logic signed [7:0] other_p = 8'shFD
@@ -92,15 +86,13 @@ module top_core #( // top.top.TopCoreMod
   real                  float_s;
   real                  double_s;
 
+// GENERATE INPLACE END head ===================================================
+
+// Add your hand-written code here - remove this line afterwards
+
+// GENERATE INPLACE BEGIN tail() ===============================================
 endmodule // top_core
 
 `default_nettype wire
 `end_keywords
-
-// =============================================================================
-//
-//   @generated @fully-generated
-//
-//   THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
-//
-// =============================================================================
+// GENERATE INPLACE END tail ===================================================
