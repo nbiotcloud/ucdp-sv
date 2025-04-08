@@ -24,8 +24,10 @@
 //
 // =============================================================================
 //
-// Module:     glbl.sync
-// Data Model: glbl.sync.SyncMod in glbl/sync.py
+// Library:    glbl
+// Module:     sync
+// Data Model: SyncMod
+//             glbl/sync.py
 //
 // =============================================================================
 
