@@ -70,8 +70,10 @@ ${u.get_copyright(obj or mod) | comment}
 overview = mod.get_overview()
 %>\
 //
-// Module:     ${mod.libname}.${mod.modname}
-// Data Model: ${mod.get_modref()} in ${u.modutil.get_file(mod.__class__, basedir=output_filepath.parent)}
+// Library:    ${mod.libname}
+// Module:     ${mod.modname}
+// Data Model: ${mod.__class__.__name__}
+//             ${u.modutil.get_file(mod.__class__, basedir=output_filepath.parent)}
 //
 % if overview:
 //

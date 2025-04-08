@@ -24,8 +24,10 @@
 //
 // =============================================================================
 //
-// Module:     top.top_core
-// Data Model: top.top.TopCoreMod in top/top.py
+// Library:    top
+// Module:     top_core
+// Data Model: TopCoreMod
+//             top/top.py
 //
 // =============================================================================
 

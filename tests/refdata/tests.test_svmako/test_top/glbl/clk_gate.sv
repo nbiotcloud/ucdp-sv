@@ -26,8 +26,10 @@
 
 // GENERATE INPLACE BEGIN fileheader() =========================================
 //
-// Module:     glbl.clk_gate
-// Data Model: glbl.clk_gate.ClkGateMod in glbl/clk_gate.py
+// Library:    glbl
+// Module:     clk_gate
+// Data Model: ClkGateMod
+//             glbl/clk_gate.py
 //
 // GENERATE INPLACE END fileheader =============================================
 
