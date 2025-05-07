@@ -42,6 +42,23 @@ class IoType(u.AStructType):
         self._add("tx", u.BitType(), u.FWD)
 
 
+class SubMod(u.AMod):
+    """Sub."""
+
+    def _build(self):
+        self.add_port(u.UintType(4), "in_i", title="title in_i", descr="descr in", comment="info about in")
+        self.add_port(u.UintType(4), "open_i", title="title open_i", descr="descr open", comment="info about open")
+        self.add_port(u.UintType(4), "open_o", title="title open_o", descr="descr open", comment="info about open")
+        self.add_port(u.UintType(4), "note_i", title="title note_i", descr="descr note", comment="info about note")
+        self.add_port(u.UintType(4), "note_o", title="title note_o", descr="descr note", comment="info about note")
+        self.add_port(
+            u.UintType(4), "default_i", title="title default_i", descr="descr default", comment="info about default"
+        )
+        self.add_port(
+            u.UintType(4), "default_o", title="title default_o", descr="descr default", comment="info about default"
+        )
+
+
 class TopMod(u.AMod):
     """Top Module."""
 
@@ -104,9 +121,6 @@ class TopMod(u.AMod):
         core.add_port(u.ArrayType(u.UintType(6), 4), "open_array_o")
         core.add_port(u.ArrayType(u.ArrayType(u.UintType(6), 4), 2), "open_matrix_o")
 
-        core.add_port(u.UintType(7), "note_i")
-        # core.con("note_i", u.OPEN) # bug in UCDP
-
         core.add_port(u.UintType(7), "nosuffix0", direction=u.IN)
         core.add_port(u.UintType(7), "nosuffix1", direction=u.OUT)
 
@@ -140,6 +154,15 @@ class TopMod(u.AMod):
 
         self.assign("value_o", "key_data_s")
         # self.route("bidir_s", "bidir_io")
+
+        sub = SubMod(self, "u_sub0")
+        sub.con("in_i", "4'h4")
+        sub.con("open_i", u.OPEN)
+        sub.con("open_o", u.OPEN)
+        sub.con("note_i", u.note("my note"))
+        sub.con("note_o", u.note("other note"))
+        sub.con("default_i", u.DEFAULT)
+        sub.con("default_o", u.DEFAULT)
 
 
 class TopCoreMod(u.ACoreMod):
