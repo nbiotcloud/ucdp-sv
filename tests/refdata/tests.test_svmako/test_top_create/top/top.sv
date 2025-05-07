@@ -140,7 +140,6 @@ module top #(
     .open_string_o(                  ), // TODO
     .open_array_o (                  ), // TODO
     .open_matrix_o(                  ), // TODO
-    .note_i       (7'h00             ), // TODO
     .nosuffix0    (7'h00             ), // I - TODO
     .nosuffix1    (                  ), // O - TODO
     .array_i      (array_s           ),
@@ -158,6 +157,20 @@ module top #(
     .main_rst_an_i(main_rst_an_i), // Async Reset (Low-Active)
     .data_i       (1'b0         ), // TODO
     .data_o       (             )  // TODO
+  );
+
+
+  // ------------------------------------------------------
+  //  top.sub: u_sub0
+  // ------------------------------------------------------
+  sub u_sub0 (
+    .in_i     (4'h4            ), // info about in
+    .open_i   (/* OPEN */      ), // info about open
+    .open_o   (/* OPEN */      ), // info about open
+    .note_i   (/* my note */   ), // info about note
+    .note_o   (/* other note */), // info about note
+    .default_i(4'h0            ), // DEFAULT - info about default
+    .default_o(                )  // DEFAULT - info about default
   );
 
 
