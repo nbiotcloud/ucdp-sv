@@ -61,6 +61,7 @@ plugins:
             - https://docs.python.org/3/objects.inv
 
 markdown_extensions:
+  - admonition
   - attr_list
   - mkdocs-click
   - pymdownx.details

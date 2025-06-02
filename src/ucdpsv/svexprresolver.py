@@ -60,13 +60,18 @@ class SvExprResolver(u.ExprResolver):
     """
     SystemVerilog Expression Resolver.
 
-    >>> import ucdp as u
-    >>> import ucdpsv as usv
-    >>> resolver = usv.SvExprResolver()
-    >>> resolver.resolve(u.ConstExpr(u.UintType(18, default=5)))
-    "18'h00005"
-    >>> resolver.resolve(u.ConstExpr(u.SintType(18, default=-5)))
-    "18'sh3FFFB"
+    This Expression Resolver Converts the UCDP internal expression representation
+    into SystemVerilog.
+
+    !!! example
+
+            >>> import ucdp as u
+            >>> import ucdpsv as usv
+            >>> resolver = usv.SvExprResolver()
+            >>> resolver.resolve(u.ConstExpr(u.UintType(18, default=5)))
+            "18'h00005"
+            >>> resolver.resolve(u.ConstExpr(u.SintType(18, default=-5)))
+            "18'sh3FFFB"
     """
 
     ff_dly: str = ""
