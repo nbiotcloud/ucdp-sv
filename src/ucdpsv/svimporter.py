@@ -54,26 +54,28 @@ def import_params_ports(
     paramattrs_ = _preprocess_attrs(paramattrs)
     portattrs_ = _preprocess_attrs(portattrs)
 
-    ifdef = None
-    for param in module.param_decl:
-        name = param.name[0]
-        attrs = _get_attrs(paramattrs_, name)
-        attrs.setdefault("type_", _get_type(mod.params, param.ptype or "", param.width or ""))
-        attrs.setdefault("ifdef", ifdef)
-        type_ = attrs.pop("type_")
-        mod.add_param(type_, name, **attrs)
-        ifdef = _handle_ifdef(attrs["ifdef"], param.name)
+    _import(module.param_decl, paramattrs_, mod.params, mod.add_param)
+    _import(module.port_decl, portattrs_, mod.params, mod.add_port, is_port=True)
 
+
+def _import(items, itemattrs, namespace, add, is_port=False):
     ifdef = None
-    for port in module.port_decl:
-        name = port.name[0]
-        attrs = _get_attrs(portattrs_, name)
-        attrs.setdefault("type_", _get_type(mod.params, port.ptype or "", port.width or ""))
-        attrs.setdefault("direction", DIRMAP[port.direction])
+    itemdict = {item.name[0]: item for item in items}
+    while itemdict:
+        item = itemdict.get(next(iter(itemdict.keys())))
+        name = item.name[0]
+        attrs = dict(_get_attrs(itemattrs, name))
+        if is_port:
+            attrs.setdefault("direction", DIRMAP[item.direction])
+        type_ = attrs.pop("type_", None)
+        if type_:
+            type_, name = _resolve_type(type_, name, itemdict, attrs.get("direction", None))
+        else:
+            type_ = _get_type(namespace, item.ptype or "", item.width or "")
+            itemdict.pop(name)
         attrs.setdefault("ifdef", ifdef)
-        type_ = attrs.pop("type_")
-        mod.add_port(type_, name, **attrs)
-        ifdef = _handle_ifdef(attrs["ifdef"], port.name)
+        add(type_, name, **attrs)
+        ifdef = _handle_ifdef(attrs["ifdef"], item.name)
 
 
 def _find_module(mod: u.BaseMod, filelistname: str):
@@ -112,6 +114,43 @@ def _get_attrs(attrs: tuple[Attrs, Attrs], name: str) -> dict[str, Any]:
     if key:
         return patts[key]
     return {}
+
+
+def _svfilter(ident: u.Ident) -> bool:
+    return not isinstance(ident.type_, u.BaseStructType)
+
+
+def _resolve_type(type_: u.BaseType, name: str, itemdict: dict[str, Any], direction: u.Direction | None) -> None:
+    if isinstance(type_, u.BaseStructType):
+        if direction is None:
+            idents = (u.Param(type_, "n"),)
+        else:
+            idents = (
+                u.Port(type_, "n_i", direction=u.IN),
+                u.Port(type_, "n_o", direction=u.OUT),
+                u.Port(type_, "n", direction=u.IN),
+                u.Port(type_, "n", direction=u.OUT),
+            )
+        for ident in idents:
+            # try to find ident which matches `name`
+            submap = {sub.name.removeprefix("n"): sub for sub in ident.iter(filter_=_svfilter)}
+            for ending, subident in submap.items():
+                if name.endswith(ending) and subident.direction == direction:
+                    ident = ident.new(name=f"{name.removesuffix(ending)}{ident.suffix}")  # noqa: PLW2901
+                    break
+            else:
+                continue
+            # ensure all struct members have their friend
+            subs = tuple(ident.iter(filter_=_svfilter))
+            if not all(sub.name in itemdict for sub in subs):
+                continue
+            # strip
+            for sub in subs:
+                itemdict.pop(sub.name)
+            return ident.type_, ident.name
+
+    itemdict.pop(name)
+    return type_, name
 
 
 def _get_type(namespace: u.Namespace, ptype: str, width: str) -> u.BaseType:

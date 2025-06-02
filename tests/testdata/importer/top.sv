@@ -52,11 +52,11 @@ module top #(
   output logic               bus_ready_o,
   output logic               bus_resp_o,
   output logic [31:0]        bus_rdata_o,
+  input  wire  [param_p-1:0] data_i,
+  output logic [width_p-1:0] cnt_o,
   `ifdef ASIC
   output logic [8:0]         brick_o,
   `endif // ASIC
-  input  wire  [param_p-1:0] data_i,
-  output logic [width_p-1:0] cnt_o,
   // key_i
   input                      key_valid_i,
   output logic               key_accept,
