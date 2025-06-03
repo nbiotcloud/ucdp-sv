@@ -170,7 +170,9 @@ module top #(
     .note_i   (/* my note */   ), // info about note
     .note_o   (/* other note */), // info about note
     .default_i(4'h0            ), // DEFAULT - info about default
-    .default_o(                )  // DEFAULT - info about default
+    .default_o(                ), // DEFAULT - info about default
+    .unused_i (4'h0            ), // UNUSED
+    .unused_o (                )  // UNUSED
   );
 
 

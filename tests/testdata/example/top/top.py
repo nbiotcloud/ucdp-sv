@@ -57,6 +57,8 @@ class SubMod(u.AMod):
         self.add_port(
             u.UintType(4), "default_o", title="title default_o", descr="descr default", comment="info about default"
         )
+        self.add_port(u.UintType(4), "unused_i")
+        self.add_port(u.UintType(4), "unused_o")
 
 
 class TopMod(u.AMod):
@@ -163,6 +165,8 @@ class TopMod(u.AMod):
         sub.con("note_o", u.note("other note"))
         sub.con("default_i", u.DEFAULT)
         sub.con("default_o", u.DEFAULT)
+        sub.con("unused_i", u.UNUSED)
+        sub.con("unused_o", u.UNUSED)
 
 
 class TopCoreMod(u.ACoreMod):
