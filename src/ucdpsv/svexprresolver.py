@@ -251,7 +251,7 @@ class SvExprResolver(u.ExprResolver):
                 if target.direction == u.IN:
                     source = self.get_default(target.type_)
             elif isinstance(source, u.Default):
-                comments.append("DEFAULT")
+                comments.append(source.note)
                 if target.direction == u.IN:
                     source = self.get_default(target.type_)
                 else:

@@ -453,14 +453,14 @@ wheels = [
 
 [[package]]
 name = "humannum"
-version = "1.2.0"
+version = "1.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "humanfriendly" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/92/0a/94bbaa85edf37d31f8efb184fce9918f6ae10de808066248d58a03374cc4/humannum-1.2.0.tar.gz", hash = "sha256:d031196e784fef879d26e947e586414f47cc8f20a95ba1135f5e1121da03325f", size = 7794 }
+sdist = { url = "https://files.pythonhosted.org/packages/6b/5d/9e410aef7d7c5ce2ec441c3da49a0dafc7e4564389d37b5e54ae4350f142/humannum-1.2.1.tar.gz", hash = "sha256:bb0933f318189a21e481829ce53d9606a57598b8461b420edff76ebd5e3da5a2", size = 7771 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/48/677ba654fb456f24ec433328a14c05f50aac457dae3033fbc6bca54f81ef/humannum-1.2.0-py3-none-any.whl", hash = "sha256:fc7190dad470d3268731fa6368b8bda15721435e811814c3aab6ed048129b57c", size = 14042 },
+    { url = "https://files.pythonhosted.org/packages/f6/d2/84df8aeee7a374faf03758ed804bc80e9e65ea876daa0bd33dd28b6ad121/humannum-1.2.1-py3-none-any.whl", hash = "sha256:0f94e5ca68e91cd9e602d113fa56e4bcd04b182eba6422e41a456cf28ead2762", size = 14028 },
 ]
 
 [[package]]
@@ -884,7 +884,7 @@ wheels = [
 
 [[package]]
 name = "mkdocstrings-python"
-version = "1.16.11"
+version = "1.16.12"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "griffe" },
@@ -892,9 +892,9 @@ dependencies = [
     { name = "mkdocstrings" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/90/a3/0c7559a355fa21127a174a5aa2d3dca2de6e479ddd9c63ca4082d5f9980c/mkdocstrings_python-1.16.11.tar.gz", hash = "sha256:935f95efa887f99178e4a7becaaa1286fb35adafffd669b04fd611d97c00e5ce", size = 205392 }
+sdist = { url = "https://files.pythonhosted.org/packages/bf/ed/b886f8c714fd7cccc39b79646b627dbea84cd95c46be43459ef46852caf0/mkdocstrings_python-1.16.12.tar.gz", hash = "sha256:9b9eaa066e0024342d433e332a41095c4e429937024945fea511afe58f63175d", size = 206065 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/c4/ffa32f2c7cdb1728026c7a34aab87796b895767893aaa54611a79b4eef45/mkdocstrings_python-1.16.11-py3-none-any.whl", hash = "sha256:25d96cc9c1f9c272ea1bd8222c900b5f852bf46c984003e9c7c56eaa4696190f", size = 124282 },
+    { url = "https://files.pythonhosted.org/packages/3b/dd/a24ee3de56954bfafb6ede7cd63c2413bb842cc48eb45e41c43a05a33074/mkdocstrings_python-1.16.12-py3-none-any.whl", hash = "sha256:22ded3a63b3d823d57457a70ff9860d5a4de9e8b1e482876fc9baabaf6f5f374", size = 124287 },
 ]
 
 [[package]]
@@ -1526,7 +1526,7 @@ wheels = [
 
 [[package]]
 name = "ucdp"
-version = "0.32.3"
+version = "0.32.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anycache" },
@@ -1545,21 +1545,21 @@ dependencies = [
     { name = "rich" },
     { name = "uniquer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ac/35/d0b5c9f294f63ccf18cf05ba586334c70edfed63535350a33479eb6b5156/ucdp-0.32.3.tar.gz", hash = "sha256:144a645eb801f06fd80f8a183059c0aa504c1ad7f8af3ef22e61f1169eafe565", size = 138552 }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/66/eb2629d309e709184e46fbb359f48f46b035f49e9bc3f0fdbeee7bb32d8f/ucdp-0.32.5.tar.gz", hash = "sha256:c8118811db3633c06b4563fe57b9ad41f9b3f9209816ee445673387a1eb67e61", size = 139082 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3f/86/a6c770d24c71272ea7061923e7f3c5cd6ebf721c381e46b9688d4451b766/ucdp-0.32.3-py3-none-any.whl", hash = "sha256:27950952e00ecdacf2d088c36185a4b3eabfc731ac5a15e926bcdebe48094d6e", size = 184862 },
+    { url = "https://files.pythonhosted.org/packages/09/9c/e9d363c91b460d035e9d6ea78efe679ac6d6a94a34d503d14f9e9908fdb1/ucdp-0.32.5-py3-none-any.whl", hash = "sha256:07c909899d59c494098300616de00f0bba0ba0d8e416c494560d5ff13781bc84", size = 184964 },
 ]
 
 [[package]]
 name = "ucdp-glbl"
-version = "1.4.0"
+version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ucdp" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/36/ad61ee4434970f16926bc13a3dc2638d9c583961c2416643ae76de811e74/ucdp_glbl-1.4.0.tar.gz", hash = "sha256:90584e2793de468ad9a31eb69381d9299c29cf1ccdcc6ff9c0fa4847a7fa7cb9", size = 8315 }
+sdist = { url = "https://files.pythonhosted.org/packages/14/27/63429e2687e955d9c78040c92b383af8a2df6f8f4d30b55b71b5f2cb6191/ucdp_glbl-1.5.0.tar.gz", hash = "sha256:88d48ee23d7bb98c51c7d3d5951c4f28f247f985965c9012e7dcec3e084aeb24", size = 8707 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ea/aa/218cae0b0053473da69ef04c35b8f856af6418729b146e2c06f170d79f10/ucdp_glbl-1.4.0-py3-none-any.whl", hash = "sha256:0cd11fab99385270c84dfa72801e6660f2f071098d2cbda7c9b70f04d358ac10", size = 13829 },
+    { url = "https://files.pythonhosted.org/packages/3b/13/1d4c66c62da1dc9d1c06f17f0a5197efae9642d62ffc0ff6907b20fa0311/ucdp_glbl-1.5.0-py3-none-any.whl", hash = "sha256:dc732e923bd360f902f613b8a9bcb4b4ffa74b99192def9e8cf8da9bab1ee7a7", size = 14285 },
 ]
 
 [[package]]
@@ -1596,7 +1596,7 @@ requires-dist = [
     { name = "aligntext", specifier = ">=1.0.0" },
     { name = "makolator", specifier = ">=2.9.1" },
     { name = "sv-simpleparser", specifier = ">=0.0.7" },
-    { name = "ucdp", specifier = ">=0.32.3" },
+    { name = "ucdp", specifier = ">=0.32.5" },
     { name = "ucdp-glbl", specifier = ">=1.4.0" },
 ]
 
