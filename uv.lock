@@ -1422,16 +1422,17 @@ wheels = [
 
 [[package]]
 name = "sv-simpleparser"
-version = "0.0.7"
+version = "0.0.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "jinja2" },
     { name = "pathlib" },
+    { name = "pygments" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9f/a5/bc9294e0c5b984dd9faa67885437095e25a208da9a62998716a9b2dbf4b2/sv_simpleparser-0.0.7.tar.gz", hash = "sha256:f4d6305fb8c78d42b7a204b685dfe65927463a34bb19c76ecd7b103c93f554a7", size = 28231 }
+sdist = { url = "https://files.pythonhosted.org/packages/4f/f6/6e7074ada26e174ee72ebce22f43dab5cf049ae51ddb0c0b7d6a3edc6d4e/sv_simpleparser-0.0.10.tar.gz", hash = "sha256:cadb2c079a3d78db39e5a704ea6bbe4e77e51ad24f59ba96c5c36bc75433a96f", size = 17073 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f5/24/5cc1dc961394895f5dea87f0c6e71d3047df699a21af7f02923b105c21ac/sv_simpleparser-0.0.7-py3-none-any.whl", hash = "sha256:0b813e5887f64aceb35a43ef8efbebb1466e70c6205f463934884dca81563c3b", size = 28263 },
+    { url = "https://files.pythonhosted.org/packages/69/bb/709923e33bfa6c4a8c337d8a2de1bb984bdae936a777f6753cdea5b40702/sv_simpleparser-0.0.10-py3-none-any.whl", hash = "sha256:07be849adc7ab3d2d94b0356ab755d99c893447bd26d4dae26296351e15db728", size = 14330 },
 ]
 
 [[package]]
@@ -1526,7 +1527,7 @@ wheels = [
 
 [[package]]
 name = "ucdp"
-version = "0.32.5"
+version = "0.33.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anycache" },
@@ -1545,9 +1546,9 @@ dependencies = [
     { name = "rich" },
     { name = "uniquer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bd/66/eb2629d309e709184e46fbb359f48f46b035f49e9bc3f0fdbeee7bb32d8f/ucdp-0.32.5.tar.gz", hash = "sha256:c8118811db3633c06b4563fe57b9ad41f9b3f9209816ee445673387a1eb67e61", size = 139082 }
+sdist = { url = "https://files.pythonhosted.org/packages/18/c6/ae49937bfce9a788ecdff9e1d037cb791e7e35966b27d934db6e0d9a5407/ucdp-0.33.0.tar.gz", hash = "sha256:4bd6c2de00d8165274f61eeaf7f92de13c97eb832fbe4051b96a2650a5cf44d4", size = 139240 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/09/9c/e9d363c91b460d035e9d6ea78efe679ac6d6a94a34d503d14f9e9908fdb1/ucdp-0.32.5-py3-none-any.whl", hash = "sha256:07c909899d59c494098300616de00f0bba0ba0d8e416c494560d5ff13781bc84", size = 184964 },
+    { url = "https://files.pythonhosted.org/packages/71/32/01a3268a7685e1c3aa872b0f02366021eec7010b5a6b58590d2d25b67e0b/ucdp-0.33.0-py3-none-any.whl", hash = "sha256:d417ec4efd4b817790c7058080c9d046d301396c4f712c31673324184f37a722", size = 185013 },
 ]
 
 [[package]]
@@ -1596,7 +1597,7 @@ requires-dist = [
     { name = "aligntext", specifier = ">=1.0.0" },
     { name = "makolator", specifier = ">=2.9.1" },
     { name = "sv-simpleparser", specifier = ">=0.0.7" },
-    { name = "ucdp", specifier = ">=0.32.5" },
+    { name = "ucdp", specifier = ">=0.33.0" },
     { name = "ucdp-glbl", specifier = ">=1.4.0" },
 ]
 

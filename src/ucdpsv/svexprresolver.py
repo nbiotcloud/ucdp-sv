@@ -222,7 +222,7 @@ class SvExprResolver(u.ExprResolver):
             align.add_row(name, expr, svsep, svcomment)
         return align
 
-    def get_instcons(  # noqa: C901,PLR0912
+    def get_instcons(
         self, instcons: u.Assigns, skips: u.Names | None = None, is_last: bool = True, indent: int = 0
     ) -> Align:
         """Return `Align` With Parameter Declarations."""
@@ -247,15 +247,14 @@ class SvExprResolver(u.ExprResolver):
 
             source = assign.source
             if source is None:
-                comments.append("TODO")
-                if target.direction == u.IN:
-                    source = self.get_default(target.type_)
-            elif isinstance(source, u.Default):
+                source = u.TODO
+
+            if isinstance(source, u.Default):
                 comments.append(source.note)
                 if target.direction == u.IN:
                     source = self.get_default(target.type_)
                 else:
-                    source = None
+                    source = ""
             elif isinstance(source, u.Note):
                 source = f"/* {source.note} */"
             else:
