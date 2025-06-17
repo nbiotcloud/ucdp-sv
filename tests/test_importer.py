@@ -136,12 +136,16 @@ class MatrixMod(u.AMod):
 def test_verilog2ports_attrs_inout():
     """Test verilog2ports."""
     top = MatrixMod()
-    assert tuple(top.params) == ()
+    assert tuple(top.params) == (
+        u.Param(u.IntegerType(default=32), "addrwidth"),
+        u.Param(u.IntegerType(default=32), "datawidth_p"),
+        u.Param(u.IntegerType(default=2), "tranwidth_p"),
+    )
     assert tuple(repr(port) for port in top.ports) == (
         "Port(BitType(), 'main_clk_i', direction=IN)",
         "Port(BitType(), 'main_rst_an_i', direction=IN)",
-        "Port(BitType(), 'intf_rx_o', direction=OUT)",
-        "Port(BitType(), 'intf_tx_i', direction=IN)",
+        "Port(BitType(), 'intf_rx_o', direction=OUT, ifdef='TRAN')",
+        "Port(BitType(), 'intf_tx_i', direction=IN, ifdef='TRAN')",
         "Port(BusType(), 'bus_a_i', direction=IN)",
         "Port(BusType(), 'bus_b_i', direction=IN)",
         "Port(BusType(), 'bus_c_o', direction=OUT)",
