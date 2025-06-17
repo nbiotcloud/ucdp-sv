@@ -86,6 +86,11 @@ class TopAttrsMod(u.AMod):
 
     filelists: u.ClassVar[u.ModFileLists] = (u.ModFileList(name="hdl", filepaths=("testdata/importer/top.sv",)),)
 
+    @property
+    def modname(self) -> str:
+        """Module Name."""
+        return "top"
+
     def _build(self) -> None:
         usv.import_params_ports(
             self,

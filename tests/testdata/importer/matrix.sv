@@ -37,7 +37,7 @@ module matrix (
 
   output wire  [1:0]         bus_s0_trans,
   output wire  [31:0]        bus_s0_addr,
-  output wire                bus_s0_write,
+  output reg                 bus_s0_write,
   output wire  [31:0]        bus_s0_wdata,
   input  logic               bus_s0_ready,
   input  logic               bus_s0_resp,
