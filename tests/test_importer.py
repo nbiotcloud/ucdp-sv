@@ -40,11 +40,7 @@ class TopMod(u.AMod):
 def test_verilog2ports():
     """Test verilog2ports."""
     top = TopMod()
-    assert tuple(top.params) == (
-        u.Param(u.IntegerType(), "param_p"),
-        u.Param(u.IntegerType(), "width_p"),
-        u.Param(u.UintType(u.Param(u.IntegerType(), "param_p")), "default_p"),
-    )
+    assert tuple(top.params) == (u.Param(u.IntegerType(default=10), "param_p"),)
     assert tuple(repr(port) for port in top.ports) == (
         "Port(BitType(), 'main_clk_i', direction=IN)",
         "Port(BitType(), 'main_rst_an_i', direction=IN)",
@@ -57,8 +53,8 @@ def test_verilog2ports():
         "Port(BitType(), 'bus_ready_o', direction=OUT)",
         "Port(BitType(), 'bus_resp_o', direction=OUT)",
         "Port(UintType(32), 'bus_rdata_o', direction=OUT)",
-        "Port(UintType(Param(IntegerType(), 'param_p')), 'data_i', direction=IN)",
-        "Port(UintType(Param(IntegerType(), 'width_p')), 'cnt_o', direction=OUT)",
+        "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'data_i', direction=IN)",
+        "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'cnt_o', direction=OUT)",
         "Port(UintType(9), 'brick_o', direction=OUT, ifdef='ASIC')",
         "Port(BitType(), 'key_valid_i', direction=IN)",
         "Port(BitType(), 'key_accept', direction=OUT)",
@@ -105,19 +101,15 @@ class TopAttrsMod(u.AMod):
 def test_verilog2ports_attrs():
     """Test verilog2ports."""
     top = TopAttrsMod()
-    assert tuple(top.params) == (
-        u.Param(u.IntegerType(), "param_p"),
-        u.Param(u.IntegerType(), "width_p"),
-        u.Param(u.UintType(u.Param(u.IntegerType(), "param_p")), "default_p"),
-    )
+    assert tuple(top.params) == (u.Param(u.IntegerType(default=10), "param_p"),)
     assert tuple(repr(port) for port in top.ports) == (
         "Port(ClkType(), 'main_clk_i', direction=IN, doc=Doc(title='Clock'))",
         "Port(BitType(), 'main_rst_an_i', direction=IN)",
         "Port(BitType(), 'intf_rx_o', direction=OUT)",
         "Port(BitType(default=1), 'intf_tx_i', direction=IN, doc=Doc(comment='a comment'))",
         "Port(BusType(), 'bus_i', direction=IN)",
-        "Port(UintType(Param(IntegerType(), 'param_p')), 'data_i', direction=IN)",
-        "Port(UintType(Param(IntegerType(), 'width_p')), 'cnt_o', direction=OUT)",
+        "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'data_i', direction=IN)",
+        "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'cnt_o', direction=OUT)",
         "Port(UintType(9), 'brick_o', direction=OUT, ifdef='ASIC')",
         "Port(BitType(), 'key_valid_i', direction=IN)",
         "Port(BitType(), 'key_accept', direction=OUT)",

@@ -1,7 +1,5 @@
 module top #(
-  parameter integer               param_p   = 10,
-  parameter integer               width_p   = $clog2(param_p + 1),
-  parameter logic   [param_p-1:0] default_p = {param_p {1'b0}}
+  parameter integer               param_p   = 10
 ) (
   // main_i
   input  wire                main_clk_i,
@@ -18,7 +16,7 @@ module top #(
   output logic               bus_resp_o,
   output logic [31:0]        bus_rdata_o,
   input  wire  [param_p-1:0] data_i,
-  output logic [width_p-1:0] cnt_o,
+  output logic [param_p-1:0] cnt_o,
   `ifdef ASIC
   output logic [8:0]         brick_o,
   `endif // ASIC

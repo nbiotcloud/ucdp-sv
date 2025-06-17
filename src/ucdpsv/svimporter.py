@@ -89,6 +89,8 @@ class SvImporter(u.Object):
                 type_, name, _ = _resolve_type(type_, param.name, paramdict)
             else:
                 type_ = _get_type(mod.params, param.ptype or "integer", param.dim, param.dim_unpacked)
+                if param.default:
+                    type_ = type_.new(default=int(param.default))  # TODO: add parser
                 paramdict.pop(name)
             if param.ifdefs:
                 attrs.setdefault("ifdef", param.ifdefs[0])
