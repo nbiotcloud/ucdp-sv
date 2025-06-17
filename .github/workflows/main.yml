@@ -24,6 +24,7 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
       - name: Install Verilator
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt install verilator
       - name: Run all
         run: make all
