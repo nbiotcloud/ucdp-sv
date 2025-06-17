@@ -8,7 +8,7 @@ jobs:
         os:
           - "ubuntu-latest"
           - "macos-latest"
-          - "windows-latest"
+          # - "windows-latest" # https://github.com/nbiotcloud/test2ref/issues/27
         python-version:
           - "3.10"
           - "3.11"
