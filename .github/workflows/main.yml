@@ -7,8 +7,8 @@ jobs:
       matrix:
         os:
           - "ubuntu-latest"
-          # - "macos-latest"
-          # - "windows-latest"
+          - "macos-latest"
+          # - "windows-latest" # https://github.com/nbiotcloud/test2ref/issues/27
         python-version:
           - "3.10"
           - "3.11"
@@ -24,6 +24,7 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
       - name: Install Verilator
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt install verilator
       - name: Run all
         run: make all

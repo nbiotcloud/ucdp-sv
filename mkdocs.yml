@@ -29,6 +29,10 @@ nav:
   - Home:
       - Welcome to UCDP-SV: index.md
       - Contributing: contributing.md
+  - Usage:
+      - Overview: usage.md
+      - Import: usage/import.md
+      - Generate: usage/generate.md
   - API:
       - Overview: api.md
 

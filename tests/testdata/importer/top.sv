@@ -1,42 +1,5 @@
-// =============================================================================
-//
-//   @generated
-//
-//   THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
-//
-// =============================================================================
-//
-//  MIT License
-//
-//  Copyright (c) 2024 nbiotcloud
-//
-//  Permission is hereby granted, free of charge, to any person obtaining a copy
-//  of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//  copies of the Software, and to permit persons to whom the Software is
-//  furnished to do so, subject to the following conditions:
-//
-//  The above copyright notice and this permission notice shall be included in all
-//  copies or substantial portions of the Software.
-//
-//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//  SOFTWARE.
-//
-// =============================================================================
-
-`begin_keywords "1800-2009"
-`default_nettype none  // implicit wires are forbidden
-
 module top #(
-  parameter integer               param_p   = 10,
-  parameter integer               width_p   = $clog2(param_p + 1),
-  parameter logic   [param_p-1:0] default_p = {param_p {1'b0}}
+  parameter integer               param_p   = 10
 ) (
   // main_i
   input  wire                main_clk_i,
@@ -53,7 +16,7 @@ module top #(
   output logic               bus_resp_o,
   output logic [31:0]        bus_rdata_o,
   input  wire  [param_p-1:0] data_i,
-  output logic [width_p-1:0] cnt_o,
+  output logic [param_p-1:0] cnt_o,
   `ifdef ASIC
   output logic [8:0]         brick_o,
   `endif // ASIC
@@ -70,14 +33,3 @@ module top #(
 
 
 endmodule // top
-
-`default_nettype wire
-`end_keywords
-
-// =============================================================================
-//
-//   @generated
-//
-//   THIS FILE IS GENERATED!!! DO NOT EDIT MANUALLY. CHANGES ARE LOST.
-//
-// =============================================================================
