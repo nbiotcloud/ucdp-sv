@@ -24,14 +24,11 @@
 """Test sv.mako."""
 
 import os
-from pathlib import Path
 from shutil import copytree
 from unittest import mock
 
 import ucdp as u
 from test2ref import assert_refdata
-
-REPLACEMENTS = ((Path("top"), "top"), (Path("glbl"), "glbl"))
 
 
 def test_top(example, tmp_path):
@@ -41,7 +38,7 @@ def test_top(example, tmp_path):
     with mock.patch.dict(os.environ, {"PRJ": str(tmp_path)}):
         u.generate(top.mod, "hdl")
 
-    assert_refdata(test_top, tmp_path, replacements=REPLACEMENTS)
+    assert_refdata(test_top, tmp_path)
 
 
 def test_top_create(example, tmp_path):
@@ -51,7 +48,7 @@ def test_top_create(example, tmp_path):
     with mock.patch.dict(os.environ, {"PRJ": str(tmp_path)}):
         u.generate(top.mod, "hdl", create=True)
 
-    assert_refdata(test_top_create, tmp_path, replacements=REPLACEMENTS)
+    assert_refdata(test_top_create, tmp_path)
 
 
 def test_mux(example, tmp_path):
@@ -61,4 +58,4 @@ def test_mux(example, tmp_path):
     with mock.patch.dict(os.environ, {"PRJ": str(tmp_path)}):
         u.generate(top.mod, "hdl")
 
-    assert_refdata(test_mux, tmp_path, replacements=REPLACEMENTS)
+    assert_refdata(test_mux, tmp_path)
