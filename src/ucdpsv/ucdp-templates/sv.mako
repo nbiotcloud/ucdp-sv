@@ -73,7 +73,7 @@ overview = mod.get_overview()
 // Library:    ${mod.libname}
 // Module:     ${mod.modname}
 // Data Model: ${mod.__class__.__name__}
-//             ${u.modutil.get_file(mod.__class__, basedir=output_filepath.parent)}
+//             ${u.modutil.get_file(mod.__class__, basedir=output_filepath.parent).as_posix()}
 //
 % if overview:
 //
