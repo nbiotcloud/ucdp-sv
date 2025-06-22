@@ -28,7 +28,7 @@ import re
 from pathlib import Path
 from typing import Any, TypeAlias
 
-import sv_simpleparser as hdl
+import hdl_parser as hdl
 import ucdp as u
 from matchor import matchsp
 
