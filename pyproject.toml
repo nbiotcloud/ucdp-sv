@@ -41,8 +41,8 @@ dependencies = [
     "aligntext>=1.0.0",
     "ucdp>=0.33.0",
     "makolator>=2.9.1",
-    "sv-simpleparser>=0.0.7",
     "ucdp-glbl>=1.4.0",
+    "hdl-parser>=0.6.1",
 ]
 
 [project.urls]

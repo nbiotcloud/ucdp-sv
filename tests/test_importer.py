@@ -137,7 +137,7 @@ def test_verilog2ports_attrs_inout():
     """Test verilog2ports."""
     top = MatrixMod()
     assert tuple(top.params) == (
-        u.Param(u.IntegerType(default=32), "addrwidth"),
+        u.Param(u.IntegerType(), "addrwidth"),
         u.Param(u.IntegerType(default=32), "datawidth_p"),
         u.Param(u.IntegerType(default=2), "tranwidth_p"),
     )
