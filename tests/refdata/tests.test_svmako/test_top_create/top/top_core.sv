@@ -24,7 +24,7 @@
 //
 // =============================================================================
 //
-// Update via:  ucdp gen top.top-top.top_core
+// Update via:  ucdp gen top.top
 //
 // Library:     top
 // Module:      top_core

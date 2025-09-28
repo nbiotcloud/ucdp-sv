@@ -70,7 +70,7 @@ ${u.get_copyright(obj or mod) | comment}
 overview = mod.get_overview()
 %>\
 //
-// Update via:  ucdp gen ${str(u.TopModRef.from_mod(mod))}
+// Update via:  ucdp gen ${str(u.TopModRef.from_mod(mod).new(sub=None))}
 //
 // Library:     ${mod.libname}
 // Module:      ${mod.modname}
