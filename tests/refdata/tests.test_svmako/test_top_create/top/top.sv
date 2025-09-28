@@ -30,16 +30,18 @@
 //
 // =============================================================================
 //
-// Library:    top
-// Module:     top
-// Data Model: TopMod
-//             top/top.py
+// Update via:  ucdp gen top.top
+//
+// Library:     top
+// Module:      top
+// Data Model:  TopMod
+//              top/top.py
 // Submodules:
-//             clk_gate u_clk_gate
-//             top_core u_core
-//             sync u_sync
-//             sync *
-//             sub u_sub0
+//              clk_gate u_clk_gate
+//              top_core u_core
+//              sync u_sync
+//              sync *
+//              sub u_sub0
 //
 // =============================================================================
 

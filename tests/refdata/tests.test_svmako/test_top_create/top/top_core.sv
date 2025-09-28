@@ -24,10 +24,12 @@
 //
 // =============================================================================
 //
-// Library:    top
-// Module:     top_core
-// Data Model: TopCoreMod
-//             top/top.py
+// Update via:  ucdp gen top.top
+//
+// Library:     top
+// Module:      top_core
+// Data Model:  TopCoreMod
+//              top/top.py
 //
 // =============================================================================
 

@@ -24,10 +24,12 @@
 //
 // =============================================================================
 //
-// Library:    glbl
-// Module:     sync
-// Data Model: SyncMod
-//             glbl/sync.py
+// Update via:  ucdp gen glbl.sync
+//
+// Library:     glbl
+// Module:      sync
+// Data Model:  SyncMod
+//              glbl/sync.py
 //
 // =============================================================================
 
