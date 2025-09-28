@@ -26,10 +26,12 @@
 
 // GENERATE INPLACE BEGIN fileheader() =========================================
 //
-// Library:    glbl
-// Module:     clk_gate
-// Data Model: ClkGateMod
-//             glbl/clk_gate.py
+// Update via:  ucdp gen glbl.clk_gate
+//
+// Library:     glbl
+// Module:      clk_gate
+// Data Model:  ClkGateMod
+//              glbl/clk_gate.py
 //
 // GENERATE INPLACE END fileheader =============================================
 

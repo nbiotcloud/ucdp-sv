@@ -30,10 +30,12 @@
 //
 // =============================================================================
 //
-// Library:    top
-// Module:     mux
-// Data Model: MuxMod
-//             top/mux.py
+// Update via:  ucdp gen top.mux
+//
+// Library:     top
+// Module:      mux
+// Data Model:  MuxMod
+//              top/mux.py
 //
 // =============================================================================
 

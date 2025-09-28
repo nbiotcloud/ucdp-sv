@@ -70,17 +70,19 @@ ${u.get_copyright(obj or mod) | comment}
 overview = mod.get_overview()
 %>\
 //
-// Library:    ${mod.libname}
-// Module:     ${mod.modname}
-// Data Model: ${mod.__class__.__name__}
-//             ${u.modutil.get_file(mod.__class__, basedir=output_filepath.parent).as_posix()}
+// Update via:  ucdp gen ${str(u.TopModRef.from_mod(mod))}
+//
+// Library:     ${mod.libname}
+// Module:      ${mod.modname}
+// Data Model:  ${mod.__class__.__name__}
+//              ${u.modutil.get_file(mod.__class__, basedir=output_filepath.parent).as_posix()}
 % if mod.insts:
 // Submodules:
 %   for modinst in mod.insts:
 %     if modinst.virtual:
-//             ${modinst.modname} *
+//              ${modinst.modname} *
 %     else:
-//             ${modinst.modname} ${modinst.name}
+//              ${modinst.modname} ${modinst.name}
 %     endif
 %   endfor
 % endif
