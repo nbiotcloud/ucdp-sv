@@ -74,6 +74,16 @@ overview = mod.get_overview()
 // Module:     ${mod.modname}
 // Data Model: ${mod.__class__.__name__}
 //             ${u.modutil.get_file(mod.__class__, basedir=output_filepath.parent).as_posix()}
+% if mod.insts:
+// Submodules:
+%   for modinst in mod.insts:
+%     if modinst.virtual:
+//             ${modinst.modname} *
+%     else:
+//             ${modinst.modname} ${modinst.name}
+%     endif
+%   endfor
+% endif
 //
 % if overview:
 //
