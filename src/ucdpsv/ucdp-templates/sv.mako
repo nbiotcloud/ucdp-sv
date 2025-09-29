@@ -68,9 +68,14 @@ ${u.get_copyright(obj or mod) | comment}
 <%def name="fileheader()">\
 <%
 overview = mod.get_overview()
+topmodref = u.TopModRef.from_mod(mod)
 %>\
 //
-// Update via:  ucdp gen ${str(u.TopModRef.from_mod(mod).new(sub=None))}
+% if topmodref:
+// Update via:  ucdp gen ${str(topmodref.new(sub=None))}
+% else:
+// Update via:  <parent module>
+% endif
 //
 // Library:     ${mod.libname}
 // Module:      ${mod.modname}
