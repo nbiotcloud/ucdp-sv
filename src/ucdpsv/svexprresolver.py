@@ -318,7 +318,9 @@ class SvExprResolver(u.ExprResolver):
         while isinstance(type_, u.BaseEnumType):
             type_ = type_.keytype
 
-        if isinstance(type_, (u.BitType, u.RailType)):
+        if isinstance(type_, u.RailType):
+            return "wire", ""
+        if isinstance(type_, u.BitType):
             keyword = "logic" if type_.logic else "bit"
             return keyword, ""
         if isinstance(type_, u.UintType):

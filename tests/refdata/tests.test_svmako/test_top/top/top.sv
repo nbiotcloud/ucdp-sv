@@ -78,7 +78,10 @@ module top #(
   output logic               key_accept_o,  // clk: main_clk_i
   input  wire  [8:0]         key_data_i,    // clk: main_clk_i
   // -
-  inout  wire  [3:0]         bidir_io
+  inout  wire  [3:0]         bidir_io,
+  input  wire                rail_i,
+  output wire                rail_o,
+  inout  wire                rail_io
   `ifdef ASIC
   ,
   output logic [8:0]         value_o

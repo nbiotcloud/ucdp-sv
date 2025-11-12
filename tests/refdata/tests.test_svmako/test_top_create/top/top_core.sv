@@ -64,7 +64,7 @@ module top_core #(
   input  wire   [5:0]         open_array_i   [3:0],
   input  wire   [5:0]         open_matrix_i  [0:1][0:param_p-1],
   input  wire   [5:0]         matrix_down_i  [0:1][param_p-1:0],
-  output logic                open_rail_o,
+  output wire                 open_rail_o,
   output string               open_string_o,
   output logic  [5:0]         open_array_o   [0:3],
   output logic  [5:0]         open_matrix_o  [0:1][0:3],
