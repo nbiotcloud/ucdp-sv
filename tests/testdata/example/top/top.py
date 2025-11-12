@@ -83,6 +83,9 @@ class TopMod(u.AMod):
         self.add_port(u.UintType(width_p), "cnt_o")
         self.add_port(StreamType(9), "key_i", clkrel="main_clk_i")
         self.add_port(u.UintType(4), "bidir_io")
+        self.add_port(u.RailType(), "rail_i")
+        self.add_port(u.RailType(), "rail_o")
+        self.add_port(u.RailType(), "rail_io")
 
         self.add_port(u.UintType(9), "value_o", ifdef="ASIC")
 
