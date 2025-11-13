@@ -1636,7 +1636,7 @@ wheels = [
 
 [[package]]
 name = "ucdp"
-version = "0.35.0"
+version = "0.35.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anycache" },
@@ -1655,9 +1655,9 @@ dependencies = [
     { name = "rich" },
     { name = "uniquer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a4/2b/056336d3c195725287609749bbf1c3ecfa2ad37a1b77e9ded8456efb9ded/ucdp-0.35.0.tar.gz", hash = "sha256:603cd30497fa1f4b8cd6e9200decc91dbe8b9a49beccbee0e3cef14071e43847", size = 140623, upload-time = "2025-09-28T19:42:05.118Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e4/99/aaec033746ac4eaf11d59ec34c8b4249b553e3ceeb7f6cf3d7a4c911e7e3/ucdp-0.35.5.tar.gz", hash = "sha256:4eb6c1a64a4afa67c1e45370d3644c44e7f23826d6dc9f66434d2124c79441a5", size = 140969, upload-time = "2025-11-13T17:01:05.365Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/da/b0/3531e80a093b4f7de835f40eca7292ccb80aa7fb2f3d77c71784c8cd5125/ucdp-0.35.0-py3-none-any.whl", hash = "sha256:8ba6b60916a2ed34c411265a0f1eca6dd2409b483415bf39a332c37ccb267b7c", size = 185990, upload-time = "2025-09-28T19:42:03.814Z" },
+    { url = "https://files.pythonhosted.org/packages/7b/37/0430269bd33ebb2b4794d3b21dc28f0ba6b428eb14036e121b65f8b99cf9/ucdp-0.35.5-py3-none-any.whl", hash = "sha256:2cbdffa02bf6a05436b5b379febcee9645565dae518d11e5a52f0b2b8a0e51a7", size = 186568, upload-time = "2025-11-13T17:01:03.81Z" },
 ]
 
 [[package]]
@@ -1706,7 +1706,7 @@ requires-dist = [
     { name = "aligntext", specifier = ">=1.0.0" },
     { name = "hdl-parser", specifier = ">=0.6.1" },
     { name = "makolator", specifier = ">=2.9.1" },
-    { name = "ucdp", specifier = ">=0.35.0" },
+    { name = "ucdp", specifier = ">=0.35.5" },
     { name = "ucdp-glbl", specifier = ">=1.4.0" },
 ]
 

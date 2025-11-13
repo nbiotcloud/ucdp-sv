@@ -72,7 +72,7 @@ topmodref = u.TopModRef.from_mod(mod)
 %>\
 //
 % if topmodref:
-// Update via:  ucdp gen ${str(topmodref.new(sub=None))}
+// Update via:  ${u.consts.CLINAME} gen ${str(topmodref.new(sub=None))}
 % else:
 // Update via:  <parent module>
 % endif
