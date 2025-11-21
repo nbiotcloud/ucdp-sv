@@ -394,7 +394,7 @@ class SvExprResolver(u.ExprResolver):
                 pendlevel = _add_declcomment(align, level, ident, pendlevel, svdecl, pre)
         _add_ifdef(pre, align, ifdef)
 
-    def get_ident_expr(self, type_: u.BaseScalarType, name: str, op: Literal[None, 0, 1, "", "~"]) -> str | None:
+    def get_ident_expr(self, type_: u.BaseScalarType, name: str, op: Literal[0, 1, "", "~"] | None) -> str | None:
         """Get Ident Expression."""
         if op is None:
             return None
