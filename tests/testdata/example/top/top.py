@@ -77,7 +77,7 @@ class TopMod(u.AMod):
         self.add_port(IoType(), "intf_i", route="create(u_core/intf_i)", clkrel=u.ASYNC)
         self.add_port(BusType(), "bus_i", clkrel="main_clk_i")
 
-        self.add_port(u.UintType(9), "brick_o", ifdef="ASIC")
+        self.add_port(u.UintType(9), "brick_o", ifdefs="ASIC")
 
         self.add_port(u.UintType(param_p), "data_i")
         self.add_port(u.UintType(width_p), "cnt_o")
@@ -87,7 +87,7 @@ class TopMod(u.AMod):
         self.add_port(u.RailType(), "rail_o")
         self.add_port(u.RailType(), "rail_io")
 
-        self.add_port(u.UintType(9), "value_o", ifdef="ASIC")
+        self.add_port(u.UintType(9), "value_o", ifdefs="ASIC")
 
         self.add_const(u.UintType(param_p, default=default_p // 2), "const_c")
 
@@ -108,7 +108,7 @@ class TopMod(u.AMod):
         core.add_port(u.UintType(param_p), "p_o")
         core.add_port(u.UintType(width_p, logic=False), "data_i")
         core.add_port(u.UintType(width_p), "data_o")
-        core.add_port(u.UintType(9), "brick_o", ifdef="ASIC")
+        core.add_port(u.UintType(9), "brick_o", ifdefs="ASIC")
         core.add_port(u.UintType(3), "some_i")
         core.add_port(u.UintType(2), "bits_i")
 

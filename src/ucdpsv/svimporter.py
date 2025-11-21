@@ -93,7 +93,7 @@ class SvImporter(u.Object):
                     type_ = type_.new(default=int(param.default))  # TODO: add parser
                 paramdict.pop(name)
             if param.ifdefs:
-                attrs.setdefault("ifdef", param.ifdefs[0])
+                attrs.setdefault("ifdefs", param.ifdefs)
             mod.add_param(type_, name, **attrs)
 
     def _import_ports(self, mod: u.BaseMod, ports: tuple[hdl.Port, ...]) -> None:
@@ -113,7 +113,7 @@ class SvImporter(u.Object):
                 type_ = _get_type(mod.params, port.ptype, port.dim, port.dim_unpacked)
                 portdict.pop(name)
             if port.ifdefs:
-                attrs.setdefault("ifdef", port.ifdefs[0])
+                attrs.setdefault("ifdefs", port.ifdefs)
             mod.add_port(type_, name, direction=direction, **attrs)
 
 

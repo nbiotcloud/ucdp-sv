@@ -59,3 +59,12 @@ def test_mux(example, tmp_path):
         u.generate(top.mod, "hdl")
 
     assert_refdata(test_mux, tmp_path)
+
+
+def test_ifdef(example, tmp_path):
+    """Ifdef Module."""
+    top = u.load("top.ifdef")
+    with mock.patch.dict(os.environ, {"PRJ": str(tmp_path)}):
+        u.generate(top.mod, "hdl")
+
+    assert_refdata(test_ifdef, tmp_path)

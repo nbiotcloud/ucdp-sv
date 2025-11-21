@@ -30,6 +30,7 @@ from typing import ClassVar, Literal, TypeAlias
 import ucdp as u
 from aligntext import Align
 from matchor import matchs
+from ucdp.ifdef import Ifdefs
 
 DIRKEYWORDS = {
     u.IN: "input",
@@ -372,27 +373,27 @@ class SvExprResolver(u.ExprResolver):
         self, align: Align, pre: str, leveliter: LevelIter, sep: str = ";", is_last: bool = False
     ) -> Iterator[tuple[u.Ident, SvDecl, str]]:
         decls = [(level, ident, self.get_decl(ident.type_)) for level, ident in leveliter]
-        nosepmap = _get_nosepmap(decls) if is_last else {}
+        endmap = _get_endmap(decls) if is_last else set()
         pendlevel: int | None = None
-        ifdef = None
+        ifdefstack: list[str] = []
         ended = False
         # Iterate over all identifier and their declarations
         for level, ident, svdecl in decls:
             # emit ifdef, even if empty
-            ifdef = _add_ifdef(pre, align, ifdef, ident.ifdef)
+            _add_ifdef(pre, align, ifdefstack, ident.ifdefs)
             if svdecl is not None:
                 if ended:
                     align.add_spacer(f"{pre}{sep}")
                     ended = False
                 pendlevel = _add_declcomment(align, level, ident, pendlevel, svdecl, pre)
-                if is_last and nosepmap.get(ident.ifdef, None) == ident.name:
+                if ident.name in endmap:
                     yield ident, svdecl, ""
                     ended = True
                 else:
                     yield ident, svdecl, sep
             else:
                 pendlevel = _add_declcomment(align, level, ident, pendlevel, svdecl, pre)
-        _add_ifdef(pre, align, ifdef)
+        _add_ifdef(pre, align, ifdefstack)
 
     def get_ident_expr(self, type_: u.BaseScalarType, name: str, op: Literal[0, 1, "", "~"] | None) -> str | None:
         """Get Ident Expression."""
@@ -441,25 +442,47 @@ def _get_comment(comment, level=0, pre="") -> str:
     return ""
 
 
-def _get_nosepmap(decls: Iterable[tuple[int, u.Ident, SvDecl | None]]) -> dict[str, str]:
+def _get_endmap(decls: Iterable[tuple[int, u.Ident, SvDecl | None]]) -> set[str]:
     """Create Auxiliary Structure To Determine Proper Commas."""
-    nosepmap: dict[str, str] = {}
+    endmap: set[str] = set()
     for _, ident, svdecl in decls:
         if svdecl is not None:
-            if not ident.ifdef:
-                nosepmap.clear()
-            nosepmap[ident.ifdef] = ident.name
-    return nosepmap
+            if not ident.ifdefs:
+                endmap.clear()
+            endmap.add(ident.name)
+    return endmap
 
 
-def _add_ifdef(pre: str, align: Align, act: str | None, ifdef: str | None = None):
+def _add_ifdef(pre: str, align: Align, stack: list[str], ifdefs: Ifdefs = ()) -> None:
     """Add IFDEF/ENDIFs."""
-    if ifdef != act:
-        if act:
-            align.add_spacer(f"{pre}`endif // {act}")
-        if ifdef:
-            align.add_spacer(f"{pre}`ifdef {ifdef}")
-    return ifdef
+    stackset = set(stack)
+    ifdefset = set(ifdefs)
+    if stackset == ifdefset:  # fit - nothing to do
+        return
+
+    # remove from right, until all obsolete defines are gone
+    obsolete = stackset - ifdefset
+    if obsolete:
+        for ifdef in reversed(tuple(stack)):
+            stack.remove(ifdef)
+            obsolete.discard(ifdef)
+            indent = "  " * len(stack)
+            align.add_spacer(f"{pre}{indent}`endif // {ifdef}")
+            if not obsolete:
+                break
+
+    # add missing
+    for ifdef in ifdefs:
+        if ifdef not in stack:
+            indent = "  " * len(stack)
+            if ifdef.startswith("!"):
+                # ifndef
+                stack.append(ifdef)
+                align.add_spacer(f"{pre}{indent}`ifndef {ifdef[1:]}")
+            else:
+                # ifdef
+                stack.append(ifdef)
+                align.add_spacer(f"{pre}{indent}`ifdef {ifdef}")
 
 
 def _add_declcomment(align: Align, level: int | None, ident: u.Ident | u.Assign, pendlevel: int | None, svdecl, pre):
