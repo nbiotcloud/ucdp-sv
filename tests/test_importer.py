@@ -55,12 +55,12 @@ def test_verilog2ports():
         "Port(UintType(32), 'bus_rdata_o', direction=OUT)",
         "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'data_i', direction=IN)",
         "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'cnt_o', direction=OUT)",
-        "Port(UintType(9), 'brick_o', direction=OUT, ifdef='ASIC')",
+        "Port(UintType(9), 'brick_o', direction=OUT, ifdefs=('ASIC',))",
         "Port(BitType(), 'key_valid_i', direction=IN)",
         "Port(BitType(), 'key_accept', direction=OUT)",
         "Port(UintType(9), 'key_data', direction=IN)",
         "Port(UintType(4), 'bidir', direction=INOUT)",
-        "Port(UintType(9), 'value_o', direction=OUT, ifdef='ASIC')",
+        "Port(UintType(9), 'value_o', direction=OUT, ifdefs=('ASIC',))",
     )
 
 
@@ -110,12 +110,12 @@ def test_verilog2ports_attrs():
         "Port(BusType(), 'bus_i', direction=IN)",
         "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'data_i', direction=IN)",
         "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'cnt_o', direction=OUT)",
-        "Port(UintType(9), 'brick_o', direction=OUT, ifdef='ASIC')",
+        "Port(UintType(9), 'brick_o', direction=OUT, ifdefs=('ASIC',))",
         "Port(BitType(), 'key_valid_i', direction=IN)",
         "Port(BitType(), 'key_accept', direction=OUT)",
         "Port(UintType(9), 'key_data', direction=IN)",
         "Port(UintType(4), 'bidir', direction=INOUT)",
-        "Port(UintType(9), 'value_o', direction=OUT, ifdef='ASIC')",
+        "Port(UintType(9), 'value_o', direction=OUT, ifdefs=('ASIC',))",
     )
 
 
@@ -144,8 +144,8 @@ def test_verilog2ports_attrs_inout():
     assert tuple(repr(port) for port in top.ports) == (
         "Port(BitType(), 'main_clk_i', direction=IN)",
         "Port(BitType(), 'main_rst_an_i', direction=IN)",
-        "Port(BitType(), 'intf_rx_o', direction=OUT, ifdef='TRAN')",
-        "Port(BitType(), 'intf_tx_i', direction=IN, ifdef='TRAN')",
+        "Port(BitType(), 'intf_rx_o', direction=OUT, ifdefs=('TRAN',))",
+        "Port(BitType(), 'intf_tx_i', direction=IN, ifdefs=('TRAN',))",
         "Port(BusType(), 'bus_a_i', direction=IN)",
         "Port(BusType(), 'bus_b_i', direction=IN)",
         "Port(BusType(), 'bus_c_o', direction=OUT)",
