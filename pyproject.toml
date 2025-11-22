@@ -52,7 +52,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "cocotb>=1.9.2",
+    "cocotb<2.0.0",
     "cocotb-test>=0.2.6",
     "contextlib-chdir>=1.0.2",
     "coveralls>=3.3.1",
