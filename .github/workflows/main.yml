@@ -27,7 +27,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/.cache/pre-commit/
-          key: pre-commit|${{ matrix.os }}|${{ matrix.python-version }}|${{ hashFiles('.pre-commit-config.yaml') }}
+          key: pre-commit|${{ matrix.os }}|${{ matrix.python-version }}
       - name: Run all
         uses: nick-fields/retry@v3
         with:
