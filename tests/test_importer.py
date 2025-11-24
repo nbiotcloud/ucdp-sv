@@ -23,9 +23,15 @@
 #
 """Test Importer."""
 
+from pathlib import Path
+
 import ucdp as u
+from pytest import mark
+from test2ref import assert_refdata
 
 import ucdpsv as usv
+
+from .conftest import TESTDATA
 
 
 class TopMod(u.AMod):
@@ -152,3 +158,30 @@ def test_verilog2ports_attrs_inout():
         "Port(BusType(), 'bus_m0', direction=IN)",
         "Port(BusType(), 'bus_s0', direction=OUT)",
     )
+
+
+class ImportedMod(u.ATailoredMod):
+    """Imported Module."""
+
+    filepath: Path
+
+    def _build(self) -> None:
+        usv.import_params_ports(self, filepath=self.filepath)
+
+    @property
+    def modname(self):
+        """Module Name."""
+        return self.filepath.stem
+
+
+@mark.parametrize("filepath", TESTDATA.glob("sv/*"))
+def test_sv(tmp_path: Path, filepath: Path):
+    """SystemVerilog Examples."""
+    mod = ImportedMod(filepath=filepath)
+    info_path = tmp_path / f"{filepath.stem}.md"
+    with info_path.open("w") as file:
+        for param in mod.params:
+            file.write(f"{param!r}\n")
+        for port in mod.ports:
+            file.write(f"{port!r}\n")
+    assert_refdata(test_sv, tmp_path, flavor=filepath.stem)
