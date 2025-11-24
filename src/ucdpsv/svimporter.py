@@ -73,6 +73,14 @@ class SvImporter(u.Object):
         """Add Port Attributes."""
         self.portattrs.update(attrs)
 
+    def set_paramattrs(self, name: str, attrs: Attrs) -> None:
+        """Set Parameter Attributes For `name`."""
+        self.paramattrs[name] = attrs
+
+    def set_portattrs(self, name: str, attrs: Attrs) -> None:
+        """Set Port Attributes For `name`."""
+        self.paramattrs[name] = attrs
+
     def import_params_ports(self, mod: u.BaseMod, filelistname: str = "hdl", filepath: Path | None = None) -> None:
         """Import Parameter and Ports."""
         filepath = filepath or self._find_filepath(mod, filelistname)
@@ -95,10 +103,8 @@ class SvImporter(u.Object):
             attrs = self._get_attrs(self.paramattrs, param.name)
             # determine type_
             type_ = attrs.pop("type_", None)
-            if type_:
-                type_, name, _ = self._resolve_type(type_, param.name, paramdict)
-            else:
-                paramdict.pop(name)
+            type_, name, _ = self._resolve_type(type_, param.name, paramdict)
+            if type_ is None:
                 type_ = self._get_type(mod, param)
                 if param.default:
                     parsed_default = SvImporter._parse(mod, param.default)
@@ -132,11 +138,10 @@ class SvImporter(u.Object):
             # determine type_
             type_ = attrs.pop("type_", None)
             direction = attrs.pop("direction", DIRMAP[port.direction])
-            if type_:
-                type_, name, direction = self._resolve_type(type_, port.name, portdict, direction=direction)
-            else:
+            type_, name, direction = self._resolve_type(type_, port.name, portdict, direction=direction)
+            if type_ is None:
                 type_ = self._get_type(mod, port) or self._get_port_defaulttype()
-                portdict.pop(name)
+            # create
             if port.ifdefs:
                 attrs.setdefault("ifdefs", port.ifdefs)
             mod.add_port(type_, name, direction=direction, **attrs)
@@ -172,7 +177,7 @@ class SvImporter(u.Object):
         name: str,
         itemdict: dict[str, Any],
         direction: u.Direction | None = None,
-    ) -> None:
+    ) -> tuple[u.BaseType, str, u.Direction | None] | None:
         if isinstance(type_, u.BaseStructType):
             if direction is None:
                 idents = (u.Param(type_, "n"),)
@@ -201,7 +206,7 @@ class SvImporter(u.Object):
                 for sub in subs:
                     itemdict.pop(sub.name)
                 return ident.type_, ident.name, ident.direction
-
+            type_ = None
         itemdict.pop(name)
         return type_, name, direction
 
