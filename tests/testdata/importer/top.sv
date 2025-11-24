@@ -15,6 +15,7 @@ module top #(
   output logic               bus_ready_o,
   output logic               bus_resp_o,
   output logic [31:0]        bus_rdata_o,
+  input  wire                bus_other_i,
   input  wire  [param_p-1:0] data_i,
   output logic [param_p-1:0] cnt_o,
   `ifdef ASIC
