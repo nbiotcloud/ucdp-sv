@@ -312,51 +312,57 @@ class SvExprResolver(u.ExprResolver):
                     align.add_row(("tran", f"u_tran_{name}", f"({name},", "", f"{source});"))
         return align
 
-    def get_decl(self, type_: u.BaseType) -> SvDecl | None:  # noqa: PLR0911,C901
+    def get_decl(self, type_: u.BaseType) -> SvDecl | None:  # noqa: C901, PLR0911, PLR0912
         """Get SV Declaration."""
+        dims = []
         while isinstance(type_, u.ArrayType):
+            if type_.packed:
+                dims.append(self._resolve_slice(type_.slice_).replace(" ", ""))
             type_ = type_.itemtype
+
         while isinstance(type_, u.BaseEnumType):
             type_ = type_.keytype
 
         if isinstance(type_, u.RailType):
-            return "wire", ""
+            return "wire", "".join(dims)
         if isinstance(type_, u.BitType):
             keyword = "logic" if type_.logic else "bit"
-            return keyword, ""
+            return keyword, "".join(dims)
         if isinstance(type_, u.UintType):
             keyword = "logic" if type_.logic else "bit"
-            return keyword, self._resolve_slice(type_.slice_).replace(" ", "")
+            dims.insert(0, self._resolve_slice(type_.slice_).replace(" ", ""))
+            return keyword, "".join(dims)
 
         if isinstance(type_, u.SintType):
             keyword = "logic signed" if type_.logic else "bit signed"
-            return keyword, self._resolve_slice(type_.slice_).replace(" ", "")
+            dims.insert(0, self._resolve_slice(type_.slice_).replace(" ", ""))
+            return keyword, "".join(dims)
 
         if isinstance(type_, u.BaseStructType):
             return None
 
         if isinstance(type_, u.IntegerType):
             keyword = "integer" if type_.logic else "int"
-            return keyword, ""
+            return keyword, "".join(dims)
 
         if isinstance(type_, u.BoolType):
-            return "bool", ""
+            return "bool", "".join(dims)
 
         if isinstance(type_, u.StringType):
-            return "string", ""
+            return "string", "".join(dims)
 
         if isinstance(type_, u.FloatType):
-            return "real", ""
+            return "real", "".join(dims)
 
         if isinstance(type_, u.DoubleType):
-            return "real", ""
+            return "real", "".join(dims)
 
         raise ValueError(type_)  # pragma: no cover
 
     def get_dims(self, type_: u.BaseType) -> str:
         """Get SV Dimensions."""
         dims = []
-        while isinstance(type_, u.ArrayType):
+        while isinstance(type_, u.ArrayType) and not type_.packed:
             dims.append(self._resolve_slice(type_.slice_).replace(" ", ""))
             type_ = type_.itemtype
         return "".join(dims)

@@ -124,7 +124,7 @@ class TopMod(u.AMod):
         core.add_port(u.RailType(), "open_rail_o")
         core.add_port(u.StringType(), "open_string_o")
         core.add_port(u.ArrayType(u.UintType(6), 4), "open_array_o")
-        core.add_port(u.ArrayType(u.ArrayType(u.UintType(6), 4), 2), "open_matrix_o")
+        core.add_port(u.ArrayType(u.ArrayType(u.UintType(6), 4, packed=True), 2), "open_matrix_o")
 
         core.add_port(u.UintType(7), "nosuffix0", direction=u.IN)
         core.add_port(u.UintType(7), "nosuffix1", direction=u.OUT)
