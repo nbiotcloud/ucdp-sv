@@ -238,11 +238,11 @@ class SvImporter(u.Object):
 
         while dim:
             width, left, right, sdir, dim = SvImporter._resolve_dim(mod, dim)
-            type_ = u.ArrayType(type_, width, left=left, right=right, direction=sdir)
+            type_ = u.ArrayType(type_, width, left=left, right=right, direction=sdir, packed=True)
 
         while dim_unpacked:
             width, left, right, sdir, dim_unpacked = SvImporter._resolve_dim(mod, dim_unpacked)
-            type_ = u.ArrayType(type_, width, left=left, right=right, direction=sdir)
+            type_ = u.ArrayType(type_, width, left=left, right=right, direction=sdir, packed=False)
 
         return type_
 
