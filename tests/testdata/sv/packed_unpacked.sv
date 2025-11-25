@@ -11,6 +11,7 @@ module packed_unpacked #(
 )(
   input  [4:0] vec_i,
   input  [4:0][3:0] matrix_i,
+  input  [4:1][1:3] matrix2_i,
   input  unpack_i [4:0],
   input  [3:0] vec_unpack_i [4:0],
   output out_o
