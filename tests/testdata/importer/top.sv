@@ -1,5 +1,9 @@
 module top #(
-  parameter integer               param_p   = 10
+  parameter integer               param_p   = 10,
+  parameter generic_p   = 'h17,
+  parameter generic2_p   = 10'd17,
+  parameter               has_rx=1,
+  parameter               has_tx=1
 ) (
   // main_i
   input  wire                main_clk_i,

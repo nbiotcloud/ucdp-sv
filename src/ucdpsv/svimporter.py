@@ -30,25 +30,23 @@ from typing import Any, TypeAlias
 
 import hdl_parser as hdl
 import ucdp as u
-from matchor import matchsp
+from matchor import match
 
-Attrs: TypeAlias = dict[str, dict[str, Any]]
+Attrs: TypeAlias = dict[str, Any]
+AttrsDict: TypeAlias = dict[str, Attrs]
+AttrsList: TypeAlias = list[tuple[str, Attrs]]
 
 _RE_WIDTH = re.compile(r"\[([^\:]+)\:([^\]+])\](.*)")
-_RE_M1 = re.compile(r"(.+?)(-\s*1)")
-DIRMAP = {
-    "input": u.IN,
-    "output": u.OUT,
-    "inout": u.INOUT,
-}
+_RE_MINUS1 = re.compile(r"(.+?)(-\s*1)")
+DIRMAP = {"input": u.IN, "output": u.OUT, "inout": u.INOUT}
 
 
 def import_params_ports(
     mod: u.BaseMod,
     filelistname: str = "hdl",
     filepath: Path | None = None,
-    paramattrs: Attrs | None = None,
-    portattrs: Attrs | None = None,
+    paramattrs: AttrsDict | AttrsList | None = None,
+    portattrs: AttrsDict | AttrsList | None = None,
 ) -> None:
     """Import Parameter and Ports."""
     importer = SvImporter()
@@ -56,32 +54,36 @@ def import_params_ports(
         importer.add_paramattrs(paramattrs)
     if portattrs:
         importer.add_portattrs(portattrs)
-    importer.import_params_ports(mod, filelistname=filelistname, filepath=filepath)
+    importer(mod, filelistname=filelistname, filepath=filepath)
 
 
 class SvImporter(u.Object):
     """Importer."""
 
-    paramattrs: Attrs = u.Field(default_factory=dict)
-    portattrs: Attrs = u.Field(default_factory=dict)
+    paramattrs: AttrsList = u.Field(default_factory=list)
+    portattrs: AttrsList = u.Field(default_factory=list)
 
-    def add_paramattrs(self, attrs: Attrs) -> None:
+    def add_paramattrs(self, paramattrs: AttrsDict | AttrsList) -> None:
         """Add Parameter Attributes."""
-        self.paramattrs.update(attrs)
+        if isinstance(paramattrs, dict):
+            paramattrs = paramattrs.items()
+        self.paramattrs.extend(paramattrs)
 
-    def add_portattrs(self, attrs: Attrs) -> None:
+    def add_portattrs(self, portattrs: AttrsDict | AttrsList) -> None:
         """Add Port Attributes."""
-        self.portattrs.update(attrs)
+        if isinstance(portattrs, dict):
+            portattrs = portattrs.items()
+        self.portattrs.extend(portattrs)
 
-    def set_paramattrs(self, name: str, attrs: Attrs) -> None:
+    def add_name_paramattrs(self, name: str, attrs: Attrs) -> None:
         """Set Parameter Attributes For `name`."""
-        self.paramattrs[name] = attrs
+        self.paramattrs.append(name, attrs)
 
-    def set_portattrs(self, name: str, attrs: Attrs) -> None:
+    def add_name_portattrs(self, name: str, attrs: Attrs) -> None:
         """Set Port Attributes For `name`."""
-        self.paramattrs[name] = attrs
+        self.portattrs.append(name, attrs)
 
-    def import_params_ports(self, mod: u.BaseMod, filelistname: str = "hdl", filepath: Path | None = None) -> None:
+    def __call__(self, mod: u.BaseMod, filelistname: str = "hdl", filepath: Path | None = None) -> None:
         """Import Parameter and Ports."""
         filepath = filepath or self._find_filepath(mod, filelistname)
         file = hdl.parse_file(filepath)
@@ -96,33 +98,34 @@ class SvImporter(u.Object):
     def _import_params(self, mod: u.BaseMod, params: tuple[hdl.Param, ...]) -> None:
         paramdict = {param.name: param for param in params}
         while paramdict:
-            # first element
-            param = paramdict.get(next(iter(paramdict.keys())))
-            name = param.name
-            # determine attrs
-            attrs = self._get_attrs(self.paramattrs, param.name)
-            # determine type_
-            type_ = attrs.pop("type_", None)
-            type_, name, _ = self._resolve_type(type_, param.name, paramdict)
+            param = paramdict.get(next(iter(paramdict.keys())))  # first element
+            # struct?
+            type_, name, attrs = self._find_type(self.paramattrs, param.name, paramdict)
             if type_ is None:
-                type_ = self._get_type(mod, param)
-                if param.default:
-                    parsed_default = SvImporter._parse(mod, param.default)
-                    if type_:
-                        try:
-                            type_ = type_.new(default=parsed_default)
-                        except TypeError:
-                            pass
-                    elif isinstance(parsed_default, u.Expr):
-                        type_ = parsed_default.type_
-                    else:
-                        type_ = self._get_param_defaulttype(default=parsed_default)
-                elif not type_:
-                    type_ = self._get_param_defaulttype()
+                # no struct - scalar type
+                attrs = self._find_attrs(self.paramattrs, param.name)
+                type_ = self._get_param_type(mod, param)
             # create
             if param.ifdefs:
                 attrs.setdefault("ifdefs", param.ifdefs)
             mod.add_param(type_, name, **attrs)
+
+    def _get_param_type(self, mod: u.BaseMod, param: hdl.Param) -> u.BaseType:
+        type_ = self._get_type(mod, param)
+        if param.default:
+            parsed_default = SvImporter._parse(mod, param.default)
+            if type_:
+                try:
+                    type_ = type_.new(default=parsed_default)
+                except TypeError:
+                    pass
+            elif isinstance(parsed_default, u.Expr):
+                type_ = parsed_default.type_
+            else:
+                type_ = self._get_param_defaulttype(default=parsed_default)
+        elif not type_:
+            type_ = self._get_param_defaulttype()
+        return type_
 
     def _get_param_defaulttype(self, **kwargs) -> u.BaseType:
         return u.IntegerType(**kwargs)
@@ -130,16 +133,13 @@ class SvImporter(u.Object):
     def _import_ports(self, mod: u.BaseMod, ports: tuple[hdl.Port, ...]) -> None:
         portdict = {port.name: port for port in ports}
         while portdict:
-            # first element
-            port = portdict.get(next(iter(portdict.keys())))
-            name = port.name
-            # determine attrs
-            attrs = self._get_attrs(self.portattrs, port.name)
-            # determine type_
-            type_ = attrs.pop("type_", None)
-            direction = attrs.pop("direction", DIRMAP[port.direction])
-            type_, name, direction = self._resolve_type(type_, port.name, portdict, direction=direction)
+            port = portdict.get(next(iter(portdict.keys())))  # first element
+            # struct?
+            direction = DIRMAP[port.direction]
+            type_, name, attrs = self._find_type(self.portattrs, port.name, portdict, direction=direction)
             if type_ is None:
+                # no struct - scalar type
+                attrs = self._find_attrs(self.portattrs, port.name)
                 type_ = self._get_type(mod, port) or self._get_port_defaulttype()
             # create
             if port.ifdefs:
@@ -161,54 +161,91 @@ class SvImporter(u.Object):
             raise ValueError(f"Filelist {filelistname!r} has empty 'filepaths'.") from None
 
     @staticmethod
-    def _get_attrs(attrs: Attrs, name: str) -> dict[str, Any]:
-        try:
-            return dict(attrs[name])
-        except KeyError:
-            pass
-        key = matchsp(name, attrs)
-        if key:
-            return dict(attrs[key])
+    def _find_attrs(attrslist: AttrsList, name: str) -> Attrs:
+        for pattern, attrs in attrslist:
+            if pattern == name or match(name, pattern):
+                if attrs.get("type_") is not None:
+                    # handled by _find_type
+                    continue
+                return dict(attrs)  # ensure attrslist is not damaged, as keys/values might get manipulated
         return {}
 
-    @staticmethod
-    def _resolve_type(
-        type_: u.BaseType,
+    def _find_type(  # noqa: C901, PLR0912
+        self,
+        attrslist: AttrsList,
         name: str,
-        itemdict: dict[str, Any],
+        itemdict: dict[str, hdl.Param | hdl.Port],
         direction: u.Direction | None = None,
-    ) -> tuple[u.BaseType, str, u.Direction | None] | None:
-        if isinstance(type_, u.BaseStructType):
-            if direction is None:
-                idents = (u.Param(type_, "n"),)
-            else:
-                idents = (
-                    u.Port(type_, "n_i", direction=u.IN),
-                    u.Port(type_, "n_o", direction=u.OUT),
-                    u.Port(type_, "n", direction=u.IN),
-                    u.Port(type_, "n", direction=u.OUT),
-                )
-            for ident in idents:
-                # try to find ident which matches `name`
-                submap = {sub.name.removeprefix("n"): sub for sub in ident.iter(filter_=_svfilter)}
-                for ending, subident in submap.items():
-                    if name.endswith(ending) and subident.direction == direction:
-                        ident = ident.new(name=f"{name.removesuffix(ending)}{ident.suffix}")  # noqa: PLW2901
+    ) -> tuple[u.BaseType, str, Attrs] | None:
+        matches: list[
+            tuple[
+                int,  # number of matches
+                u.BaseType,  # type_
+                str,  # name
+                tuple[str, ...],  # obsolete names - strips
+                Attrs,  # attributes
+            ]
+        ] = []
+        for pattern, attrs in attrslist:
+            if pattern == name or match(name, pattern):
+                type_ = attrs.get("type_")
+                if not type_:
+                    # handled by _find_attrs
+                    continue
+
+                if isinstance(type_, u.BaseStructType):
+                    # create ident with base-type and check that any member matches
+                    if direction is None:
+                        # just one flavor
+                        idents = (u.Param(type_, "n"),)
+                    else:
+                        # with/without suffix
+                        idents = (
+                            u.Port(type_, "n_i", direction=u.IN),
+                            u.Port(type_, "n_o", direction=u.OUT),
+                            u.Port(type_, "n", direction=u.IN),
+                            u.Port(type_, "n", direction=u.OUT),
+                            u.Port(type_, "n", direction=u.INOUT),
+                            u.Port(type_, "n_io", direction=u.INOUT),
+                        )
+                    for ident in idents:
+                        # try to find ident where any subident.name matches `name`
+                        submap = {sub.name.removeprefix("n"): sub for sub in ident.iter(filter_=_svfilter)}
+                        for ending, subident in submap.items():
+                            if name.endswith(ending) and subident.direction == direction:
+                                # identifier found - create identifier with proper base name
+                                ident = ident.new(name=f"{name.removesuffix(ending)}{ident.suffix}")  # noqa: PLW2901
+                                break
+                        else:
+                            # not matching
+                            continue
+                        # ensure all struct members have their friend
+                        subs = tuple(ident.iter(filter_=_svfilter))
+                        if not all(sub.name in itemdict for sub in subs):
+                            continue
+                        # todo: check type
+                        matches.append((len(subs), type_, ident.name, tuple(sub.name for sub in subs), attrs))
                         break
                 else:
-                    continue
-                # ensure all struct members have their friend
-                subs = tuple(ident.iter(filter_=_svfilter))
-                if not all(sub.name in itemdict for sub in subs):
-                    continue
-                # todo: check type
-                # strip
-                for sub in subs:
-                    itemdict.pop(sub.name)
-                return ident.type_, ident.name, ident.direction
-            type_ = None
-        itemdict.pop(name)
-        return type_, name, direction
+                    matches.append((1, type_, name, (name,), attrs))
+
+        # sort identifier by number of subs
+        matches = sorted(matches)
+
+        # nothing found
+        if not matches:
+            itemdict.pop(name)
+            return None, name, {}
+
+        # use best match - highest number of covered subs
+        _, type_, name, strips, attrs = matches[-1]
+        # strip
+        for strip in strips:
+            itemdict.pop(strip)
+        # strip type
+        attrs = dict(attrs)
+        attrs.pop("type_")
+        return type_, name, attrs
 
     @staticmethod
     def _get_type(mod: u.BaseMod, item: hdl.Param | hdl.Port) -> u.BaseMod | None:
@@ -276,7 +313,7 @@ class SvImporter(u.Object):
 
     @staticmethod
     def _plus1(mod: u.BaseMod, value: str, expr: int | u.Expr) -> int | u.Expr:
-        m = _RE_M1.fullmatch(value)
+        m = _RE_MINUS1.fullmatch(value)
         if m:
             return SvImporter._parse(mod, m.group(1))
         return expr + 1

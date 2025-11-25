@@ -46,7 +46,13 @@ class TopMod(u.AMod):
 def test_verilog2ports():
     """Test verilog2ports."""
     top = TopMod()
-    assert tuple(top.params) == (u.Param(u.IntegerType(default=10), "param_p"),)
+    assert tuple(top.params) == (
+        u.Param(u.IntegerType(default=10), "param_p"),
+        u.Param(u.UintType(8, default=23), "generic_p"),
+        u.Param(u.UintType(10, default=17), "generic2_p"),
+        u.Param(u.IntegerType(default=1), "has_rx"),
+        u.Param(u.IntegerType(default=1), "has_tx"),
+    )
     assert tuple(repr(port) for port in top.ports) == (
         "Port(BitType(), 'main_clk_i', direction=IN)",
         "Port(BitType(), 'main_rst_an_i', direction=IN)",
@@ -71,17 +77,31 @@ def test_verilog2ports():
     )
 
 
+class IoType(u.AStructType):
+    """IO Type."""
+
+    def _build(self) -> None:
+        self._add("rx", u.BitType())
+        self._add("tx", u.BitType(), orientation=u.BWD)
+
+
 class BusType(u.AStructType):
     """Bus Type."""
+
+    feature: bool = True
+    hidden: bool = False
 
     def _build(self) -> None:
         self._add("trans", u.UintType(2))
         self._add("addr", u.UintType(32))
         self._add("write", u.BitType())
         self._add("wdata", u.UintType(32))
-        self._add("ready", u.BitType(), orientation=u.BWD)
+        if self.feature:
+            self._add("ready", u.BitType(), orientation=u.BWD)
         self._add("resp", u.BitType(), orientation=u.BWD)
         self._add("rdata", u.UintType(32), orientation=u.BWD)
+        if self.hidden:
+            self._add("hidden", u.UintType(32), orientation=u.BWD)
 
 
 class TopAttrsMod(u.AMod):
@@ -97,24 +117,82 @@ class TopAttrsMod(u.AMod):
     def _build(self) -> None:
         usv.import_params_ports(
             self,
-            portattrs={
-                "main_clk_i": {"type_": u.ClkType()},
-                "in*_tx_i": {"type_": u.BitType(default=1), "comment": "a comment"},
-                "bus_*": {"type_": BusType()},
-            },
+            portattrs=(
+                ("main_clk_i", {"type_": u.ClkType()}),
+                ("in*_tx_i", {"type_": u.BitType(default=1), "comment": "a comment"}),
+                ("bus_*", {"type_": BusType(hidden=True)}),
+                ("bus_*", {"type_": BusType(feature=False)}),
+                ("bus_*", {"type_": BusType(feature=True)}),
+            ),
         )
 
 
 def test_verilog2ports_attrs():
     """Test verilog2ports."""
     top = TopAttrsMod()
-    assert tuple(top.params) == (u.Param(u.IntegerType(default=10), "param_p"),)
+    assert tuple(top.params) == (
+        u.Param(u.IntegerType(default=10), "param_p"),
+        u.Param(u.UintType(8, default=23), "generic_p"),
+        u.Param(u.UintType(10, default=17), "generic2_p"),
+        u.Param(u.IntegerType(default=1), "has_rx"),
+        u.Param(u.IntegerType(default=1), "has_tx"),
+    )
     assert tuple(repr(port) for port in top.ports) == (
         "Port(ClkType(), 'main_clk_i', direction=IN, doc=Doc(title='Clock'))",
         "Port(BitType(), 'main_rst_an_i', direction=IN)",
         "Port(BitType(), 'intf_rx_o', direction=OUT)",
         "Port(BitType(default=1), 'intf_tx_i', direction=IN, doc=Doc(comment='a comment'))",
         "Port(BusType(), 'bus_i', direction=IN)",
+        "Port(BitType(), 'bus_other_i', direction=IN)",
+        "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'data_i', direction=IN)",
+        "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'cnt_o', direction=OUT)",
+        "Port(UintType(9), 'brick_o', direction=OUT, ifdefs=('ASIC',))",
+        "Port(BitType(), 'key_valid_i', direction=IN)",
+        "Port(BitType(), 'key_accept', direction=OUT)",
+        "Port(UintType(9), 'key_data', direction=IN)",
+        "Port(UintType(4), 'bidir', direction=INOUT)",
+        "Port(UintType(9), 'value_o', direction=OUT, ifdefs=('ASIC',))",
+    )
+
+
+class TopAttrs2Mod(u.AMod):
+    """Example Module."""
+
+    filelists: u.ClassVar[u.ModFileLists] = (u.ModFileList(name="hdl", filepaths=("testdata/importer/top.sv",)),)
+
+    @property
+    def modname(self) -> str:
+        """Module Name."""
+        return "top"
+
+    def _build(self) -> None:
+        usv.import_params_ports(
+            self,
+            paramattrs=(("has*", {"comment": "Hello is it me?"}),),
+            portattrs=(
+                ("main_clk_i", {"type_": u.ClkType()}),
+                ("intf*", {"type_": IoType()}),
+                ("bus_*", {"type_": BusType(feature=False)}),
+            ),
+        )
+
+
+def test_verilog2ports_attrs2():
+    """Test verilog2ports."""
+    top = TopAttrs2Mod()
+    assert tuple(top.params) == (
+        u.Param(u.IntegerType(default=10), "param_p"),
+        u.Param(u.UintType(8, default=23), "generic_p"),
+        u.Param(u.UintType(10, default=17), "generic2_p"),
+        u.Param(u.IntegerType(default=1), "has_rx"),
+        u.Param(u.IntegerType(default=1), "has_tx"),
+    )
+    assert tuple(repr(port) for port in top.ports) == (
+        "Port(ClkType(), 'main_clk_i', direction=IN, doc=Doc(title='Clock'))",
+        "Port(BitType(), 'main_rst_an_i', direction=IN)",
+        "Port(IoType(), 'intf_o', direction=OUT)",
+        "Port(BusType(feature=False), 'bus_i', direction=IN)",
+        "Port(BitType(), 'bus_ready_o', direction=OUT)",
         "Port(BitType(), 'bus_other_i', direction=IN)",
         "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'data_i', direction=IN)",
         "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'cnt_o', direction=OUT)",
