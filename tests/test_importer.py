@@ -205,6 +205,58 @@ def test_verilog2ports_attrs2():
     )
 
 
+class DynBusType(u.DynamicStructType):
+    """Dynamic Type Example."""
+
+    def _build(self) -> None:
+        self._add("addr", u.UintType(32))
+        self._add("write", u.BitType())
+        self._add("resp", u.BitType(), orientation=u.BWD)
+        self._add("rdata", u.UintType(32), orientation=u.BWD)
+
+
+class TopAttrsDynMod(u.AMod):
+    """Example Module."""
+
+    filelists: u.ClassVar[u.ModFileLists] = (u.ModFileList(name="hdl", filepaths=("testdata/importer/top.sv",)),)
+
+    @property
+    def modname(self) -> str:
+        """Module Name."""
+        return "top"
+
+    def _build(self) -> None:
+        usv.import_params_ports(
+            self,
+            portattrs=(
+                ("main_clk_i", {"type_": u.ClkType()}),
+                ("intf*", {"type_": IoType()}),
+                ("key_*", {"type_": u.DynamicStructType()}),
+                ("bus_*", {"type_": DynBusType()}),
+            ),
+        )
+
+
+def test_verilog2ports_attrs_dyn():
+    """Test verilog2ports."""
+    top = TopAttrsDynMod()
+    assert tuple(repr(port) for port in top.ports) == (
+        "Port(ClkType(), 'main_clk_i', direction=IN, doc=Doc(title='Clock'))",
+        "Port(BitType(), 'main_rst_an_i', direction=IN)",
+        "Port(IoType(), 'intf_o', direction=OUT)",
+        "Port(UintType(2), 'bus_trans_i', direction=IN)",
+        "Port(DynBusType(), 'bus_i', direction=IN)",
+        "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'data_i', direction=IN)",
+        "Port(UintType(Param(IntegerType(default=10), 'param_p')), 'cnt_o', direction=OUT)",
+        "Port(UintType(9), 'brick_o', direction=OUT, ifdefs=('ASIC',))",
+        "Port(BitType(), 'key_valid_i', direction=IN)",
+        "Port(BitType(), 'key_accept', direction=OUT)",
+        "Port(UintType(9), 'key_data', direction=IN)",
+        "Port(UintType(4), 'bidir', direction=INOUT)",
+        "Port(UintType(9), 'value_o', direction=OUT, ifdefs=('ASIC',))",
+    )
+
+
 class MatrixMod(u.AMod):
     """Matrix Module."""
 
