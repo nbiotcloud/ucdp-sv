@@ -24,6 +24,8 @@
 
 """SystemVerilog Importer."""
 
+# ruff: noqa: PLW2901
+
 import re
 from pathlib import Path
 from typing import Any, TypeAlias
@@ -36,7 +38,7 @@ Attrs: TypeAlias = dict[str, Any]
 AttrsDict: TypeAlias = dict[str, Attrs]
 AttrsList: TypeAlias = list[tuple[str, Attrs]]
 
-_RE_WIDTH = re.compile(r"\[([^\:]+)\:([^\]+])\](.*)")
+_RE_WIDTH = re.compile(r"\[([^\:]+)\s*\:\s*([^\]+])\](.*)")
 _RE_MINUS1 = re.compile(r"(.+?)(-\s*1)")
 DIRMAP = {"input": u.IN, "output": u.OUT, "inout": u.INOUT}
 
@@ -100,7 +102,7 @@ class SvImporter(u.Object):
         while paramdict:
             param = paramdict.get(next(iter(paramdict.keys())))  # first element
             # struct?
-            type_, name, attrs = self._find_type(self.paramattrs, param.name, paramdict)
+            type_, name, attrs = self._find_type(mod, self.paramattrs, param.name, paramdict)
             if type_ is None:
                 # no struct - scalar type
                 attrs = self._find_attrs(self.paramattrs, param.name)
@@ -136,7 +138,7 @@ class SvImporter(u.Object):
             port = portdict.get(next(iter(portdict.keys())))  # first element
             # struct?
             direction = DIRMAP[port.direction]
-            type_, name, attrs = self._find_type(self.portattrs, port.name, portdict, direction=direction)
+            type_, name, attrs = self._find_type(mod, self.portattrs, port.name, portdict, direction=direction)
             if type_ is None:
                 # no struct - scalar type
                 attrs = self._find_attrs(self.portattrs, port.name)
@@ -172,6 +174,7 @@ class SvImporter(u.Object):
 
     def _find_type(  # noqa: C901, PLR0912
         self,
+        mod: u.BaseMod,
         attrslist: AttrsList,
         name: str,
         itemdict: dict[str, hdl.Param | hdl.Port],
@@ -214,7 +217,7 @@ class SvImporter(u.Object):
                         for ending, subident in submap.items():
                             if name.endswith(ending) and subident.direction == direction:
                                 # identifier found - create identifier with proper base name
-                                ident = ident.new(name=f"{name.removesuffix(ending)}{ident.suffix}")  # noqa: PLW2901
+                                ident = ident.new(name=f"{name.removesuffix(ending)}{ident.suffix}")
                                 break
                         else:
                             # not matching
@@ -223,6 +226,24 @@ class SvImporter(u.Object):
                         subs = tuple(ident.iter(filter_=_svfilter))
                         if not all(sub.name in itemdict for sub in subs):
                             continue
+                        if isinstance(type_, u.DynamicStructType):
+                            type_ = type_.new()
+                            for item in itemdict.values():
+                                if not item.name.startswith(ident.basename):
+                                    continue
+                                if any(sub.name == item.name for sub in subs):
+                                    continue
+                                subname = item.name.removeprefix(f"{ident.basename}_")
+                                direction = getattr(item, "direction", None)
+                                if direction is not None:
+                                    subdirection = DIRMAP[direction] * ident.direction
+                                else:
+                                    subdirection = u.IN
+                                subname = subname.removesuffix(subdirection.suffix)
+                                type_.add(subname, self._get_type(mod, item), orientation=u.FWD * subdirection)
+                            ident = ident.new(type_=type_)
+                            subs = tuple(ident.iter(filter_=_svfilter))
+                            print(subs)
                         # todo: check type
                         matches.append((len(subs), type_, ident.name, tuple(sub.name for sub in subs), attrs))
                         break
