@@ -306,12 +306,21 @@ class ImportedMod(u.ATailoredMod):
         return self.filepath.stem
 
 
+DEFINES = {
+    "ifdef_else": {"MOD_PARAM": 5},
+    "ifdef_elif_95": {"VALUE": 5},
+}
+
+
 @mark.parametrize("filepath", TESTDATA.glob("sv/*"))
 def test_sv(tmp_path: Path, filepath: Path):
     """SystemVerilog Examples."""
-    mod = ImportedMod(filepath=filepath)
-    info_path = tmp_path / f"{filepath.stem}.md"
+    defines = DEFINES.get(filepath.stem, None)
+    mod = ImportedMod(filepath=filepath, defines=defines)
+    info_path = tmp_path / f"{filepath.stem}.txt"
     with info_path.open("w") as file:
+        for define in mod.defines or []:
+            file.write(f"{define!r}\n")
         for param in mod.params:
             file.write(f"{param!r}\n")
         for port in mod.ports:

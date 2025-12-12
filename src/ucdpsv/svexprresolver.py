@@ -155,11 +155,22 @@ class SvExprResolver(u.ExprResolver):
         return align
 
     def get_portdecls(
-        self, ports: u.Idents, is_last: bool = True, indent: int = 0, wirenames: u.Names | None = None
+        self,
+        ports: u.Idents,
+        is_last: bool = True,
+        indent: int = 0,
+        wirenames: u.Names | None = None,
+        no_comments: bool = False,
     ) -> Align:
         """Return `Align` With Port Declarations."""
         return self._get_signaldecls(
-            ports.leveliter(), ",", is_last=is_last, indent=indent, wirenames=wirenames, ports=True
+            ports.leveliter(),
+            ",",
+            is_last=is_last,
+            indent=indent,
+            wirenames=wirenames,
+            ports=True,
+            no_comments=no_comments,
         )
 
     def get_signaldecls(self, signals: u.Idents, indent: int = 0, wirenames: u.Names | None = None) -> Align:
@@ -180,12 +191,13 @@ class SvExprResolver(u.ExprResolver):
         indent: int,
         wirenames: u.Names | None = None,
         ports: bool = False,
+        no_comments: bool = False,
     ) -> Align:
         align = Align(rtrim=True, strip_empty_cols=True)
         pre = " " * indent
         align.set_separators(" ", first=pre)
         wirenames = u.split(wirenames)
-        for ident, svdecl, svsep in self._iter_idents(align, pre, leveliter, sep, is_last):
+        for ident, svdecl, svsep in self._iter_idents(align, pre, leveliter, sep, is_last, no_comments=no_comments):
             name = ident.name
             svdims = self.get_dims(ident.type_)
             if svdims:
@@ -375,8 +387,18 @@ class SvExprResolver(u.ExprResolver):
         """Get SV Value."""
         return self._resolve_value(ident.type_, value=getattr(ident, "value", None))
 
+    @staticmethod
+    def _get_define(define: u.Define) -> str:
+        return f"`{define.name[1:]}"
+
     def _iter_idents(
-        self, align: Align, pre: str, leveliter: LevelIter, sep: str = ";", is_last: bool = False
+        self,
+        align: Align,
+        pre: str,
+        leveliter: LevelIter,
+        sep: str = ";",
+        is_last: bool = False,
+        no_comments: bool = False,
     ) -> Iterator[tuple[u.Ident, SvDecl, str]]:
         decls = [(level, ident, self.get_decl(ident.type_)) for level, ident in leveliter]
         endmap = _get_endmap(decls) if is_last else set()
@@ -391,13 +413,14 @@ class SvExprResolver(u.ExprResolver):
                 if ended:
                     align.add_spacer(f"{pre}{sep}")
                     ended = False
-                pendlevel = _add_declcomment(align, level, ident, pendlevel, svdecl, pre)
+                if not no_comments:
+                    pendlevel = _add_declcomment(align, level, ident, pendlevel, svdecl, pre)
                 if ident.name in endmap:
                     yield ident, svdecl, ""
                     ended = True
                 else:
                     yield ident, svdecl, sep
-            else:
+            elif not no_comments:
                 pendlevel = _add_declcomment(align, level, ident, pendlevel, svdecl, pre)
         _add_ifdef(pre, align, ifdefstack)
 

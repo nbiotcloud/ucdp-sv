@@ -53,6 +53,7 @@ class IfdefMod(u.AMod):
         sub0.con("b_i", "b_i")
         Sub1Mod(self, "u_sub1")
         Sub2Mod(self, "u_sub2")
+        Sub3Mod(self, "u_sub3")
 
 
 class Sub0Mod(u.AMod):
@@ -93,4 +94,16 @@ class Sub2Mod(u.AMod):
         self.add_port(u.UintType(8), "q_i")
         self.add_port(IoType(), "r_i", ifdefs=("B",))
         self.add_port(u.UintType(8), "s_i", ifdefs=("D", "E"))
+        self.add_port(u.UintType(8), "t_i")
+
+
+class Sub3Mod(u.AMod):
+    """Sub."""
+
+    filelists: u.ClassVar[u.ModFileLists] = (HdlFileList(gen="full"),)
+
+    def _build(self):
+        mywidth = u.Define("_MYWIDTH", value=4)
+        mydefault = u.Define("_MYDEFAULT", value=2)
+        self.add_port(u.UintType(mywidth, default=mydefault), "q_i")
         self.add_port(u.UintType(8), "t_i")
