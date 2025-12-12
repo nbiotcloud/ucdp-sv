@@ -37,6 +37,7 @@ from matchor import match
 Attrs: TypeAlias = dict[str, Any]
 AttrsDict: TypeAlias = dict[str, Attrs]
 AttrsList: TypeAlias = list[tuple[str, Attrs]]
+Item: TypeAlias = hdl.Param | hdl.Port
 
 _RE_WIDTH = re.compile(r"\[([^\:]+)\s*\:\s*([^\]+])\](.*)")
 _RE_MINUS1 = re.compile(r"(.+?)(-\s*1)")
@@ -48,12 +49,15 @@ def import_params_ports(
     filelistname: str = "hdl",
     filepath: Path | None = None,
     paramattrs: AttrsDict | AttrsList | None = None,
+    constattrs: AttrsDict | AttrsList | None = None,
     portattrs: AttrsDict | AttrsList | None = None,
 ) -> None:
     """Import Parameter and Ports."""
     importer = SvImporter()
     if paramattrs:
         importer.add_paramattrs(paramattrs)
+    if constattrs:
+        importer.add_constattrs(constattrs)
     if portattrs:
         importer.add_portattrs(portattrs)
     importer(mod, filelistname=filelistname, filepath=filepath)
@@ -63,6 +67,7 @@ class SvImporter(u.Object):
     """Importer."""
 
     paramattrs: AttrsList = u.Field(default_factory=list)
+    constattrs: AttrsList = u.Field(default_factory=list)
     portattrs: AttrsList = u.Field(default_factory=list)
 
     def add_paramattrs(self, paramattrs: AttrsDict | AttrsList) -> None:
@@ -71,6 +76,12 @@ class SvImporter(u.Object):
             paramattrs = paramattrs.items()
         self.paramattrs.extend(paramattrs)
 
+    def add_constattrs(self, constattrs: AttrsDict | AttrsList) -> None:
+        """Add Constant Attributes."""
+        if isinstance(constattrs, dict):
+            constattrs = constattrs.items()
+        self.constattrs.extend(constattrs)
+
     def add_portattrs(self, portattrs: AttrsDict | AttrsList) -> None:
         """Add Port Attributes."""
         if isinstance(portattrs, dict):
@@ -78,39 +89,67 @@ class SvImporter(u.Object):
         self.portattrs.extend(portattrs)
 
     def add_name_paramattrs(self, name: str, attrs: Attrs) -> None:
-        """Set Parameter Attributes For `name`."""
-        self.paramattrs.append(name, attrs)
+        """Add Parameter Attributes For `name`."""
+        self.paramattrs.append((name, attrs))
+
+    def add_name_constattrs(self, name: str, attrs: Attrs) -> None:
+        """Add Constant Attributes For `name`."""
+        self.constattrs.append((name, attrs))
 
     def add_name_portattrs(self, name: str, attrs: Attrs) -> None:
-        """Set Port Attributes For `name`."""
-        self.portattrs.append(name, attrs)
+        """Add Port Attributes For `name`."""
+        self.portattrs.append((name, attrs))
 
-    def __call__(self, mod: u.BaseMod, filelistname: str = "hdl", filepath: Path | None = None) -> None:
-        """Import Parameter and Ports."""
+    def __call__(
+        self,
+        mod: u.BaseMod,
+        filelistname: str = "hdl",
+        filepath: Path | None = None,
+        no_params: bool = False,
+        no_consts: bool = False,
+        no_ports: bool = False,
+    ) -> None:
+        """
+        Import Parameter, Constants and Ports.
+
+        Args:
+            mod: Module which will receive parameters, constant and ports.
+
+        Keyword Args:
+            filelistname: Name of filelist which will be looked up in `mod.filelists`.
+            filepath: Explicit File Path.
+            no_params: Skip Import of Parameter
+            no_consts: Skip Import of Constants
+            no_ports: Skip Import of Ports
+        """
         filepath = filepath or self._find_filepath(mod, filelistname)
         file = hdl.parse_file(filepath)
         for module in file.modules:
             if module.name == mod.modname:
-                self._import_params(mod, module.params)
-                self._import_ports(mod, module.ports)
+                if not no_params:
+                    self._import_params(mod, self.paramattrs, module.params, mod.add_param)
+                if not no_consts:
+                    self._import_params(mod, self.constattrs, module.localparams, mod.add_const)
+                if not no_ports:
+                    self._import_ports(mod, module.ports)
                 break
         else:
             raise ValueError(f"{filepath} does not contain module {mod.modname}")
 
-    def _import_params(self, mod: u.BaseMod, params: tuple[hdl.Param, ...]) -> None:
-        paramdict = {param.name: param for param in params}
+    def _import_params(self, mod: u.BaseMod, paramattrs: AttrsList, params: tuple[hdl.Param, ...], add_func) -> None:
+        paramdict = self._by_name(mod, params)
         while paramdict:
             param = paramdict.get(next(iter(paramdict.keys())))  # first element
             # struct?
-            type_, name, attrs = self._find_type(mod, self.paramattrs, param.name, paramdict)
+            type_, name, attrs = self._find_type(mod, paramattrs, param.name, paramdict)
             if type_ is None:
                 # no struct - scalar type
-                attrs = self._find_attrs(self.paramattrs, param.name)
+                attrs = self._find_attrs(paramattrs, param.name)
                 type_ = self._get_param_type(mod, param)
             # create
             if param.ifdefs:
                 attrs.setdefault("ifdefs", param.ifdefs)
-            mod.add_param(type_, name, **attrs)
+            add_func(type_, name, **attrs)
 
     def _get_param_type(self, mod: u.BaseMod, param: hdl.Param) -> u.BaseType:
         type_ = self._get_type(mod, param)
@@ -133,7 +172,7 @@ class SvImporter(u.Object):
         return u.IntegerType(**kwargs)
 
     def _import_ports(self, mod: u.BaseMod, ports: tuple[hdl.Port, ...]) -> None:
-        portdict = {port.name: port for port in ports}
+        portdict = self._by_name(mod, ports)
         while portdict:
             port = portdict.get(next(iter(portdict.keys())))  # first element
             # struct?
@@ -150,6 +189,22 @@ class SvImporter(u.Object):
 
     def _get_port_defaulttype(self) -> u.BaseType:
         return u.BitType()
+
+    @staticmethod
+    def _by_name(mod: u.BaseMod, items: tuple[Item, ...]) -> dict[str, Item]:
+        itemdict = {}
+        for item in items:
+            ifdefs = u.resolve_ifdefs(mod.defines, item.ifdefs)
+            if ifdefs is None:
+                # disabled by ifdef
+                continue
+            added = itemdict.setdefault(item.name, item)
+            if added is not item:
+                raise ValueError(
+                    f"{item.name!r} is duplicate due to ifdefs. "
+                    f"Please set defines on {mod!r} for either {added.ifdefs} or {item.ifdefs}"
+                )
+        return itemdict
 
     @staticmethod
     def _find_filepath(mod: u.BaseMod, filelistname: str) -> Path:
@@ -177,7 +232,7 @@ class SvImporter(u.Object):
         mod: u.BaseMod,
         attrslist: AttrsList,
         name: str,
-        itemdict: dict[str, hdl.Param | hdl.Port],
+        itemdict: dict[str, Item],
         direction: u.Direction | None = None,
     ) -> tuple[u.BaseType, str, Attrs] | None:
         matches: list[
@@ -269,7 +324,7 @@ class SvImporter(u.Object):
         return type_, name, attrs
 
     @staticmethod
-    def _get_type(mod: u.BaseMod, item: hdl.Param | hdl.Port) -> u.BaseMod | None:
+    def _get_type(mod: u.BaseMod, item: Item) -> u.BaseMod | None:
         ptype = item.ptype
         dtype = getattr(item, "dtype", "").split(" ")
         dim = item.dim
@@ -285,8 +340,8 @@ class SvImporter(u.Object):
             type_ = u.IntegerType()
         elif dim:
             width, left, right, sdir, dim = SvImporter._resolve_dim(mod, dim)
-            if sdir != u.DOWN:
-                raise ValueError(f"{mod}: {dim} is not DOWNTO")
+            # if sdir != u.DOWN:
+            #     raise ValueError(f"{mod}: {dim} is not DOWNTO")
             if "signed" in dtype:
                 type_ = u.SintType(width=width, right=right)
             else:

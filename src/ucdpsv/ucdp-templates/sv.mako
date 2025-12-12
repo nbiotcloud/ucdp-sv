@@ -142,10 +142,10 @@ ${params.get()}
 </%def>
 
 
-<%def name="ports(is_last=False, wirenames=None)">\
+<%def name="ports(is_last=False, wirenames=None, no_comments=False)">\
 <%
 rslvr = usv.get_resolver(mod)
-ports = rslvr.get_portdecls(mod.ports, is_last=is_last, wirenames=wirenames)
+ports = rslvr.get_portdecls(mod.ports, is_last=is_last, wirenames=wirenames, no_comment=no_comments)
 %>\
 ${ports.get()}
 </%def>
