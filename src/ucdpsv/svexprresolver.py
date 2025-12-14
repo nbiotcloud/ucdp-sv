@@ -543,5 +543,5 @@ def _get_port_decl(ident: u.Ident, svdecl: SvDecl) -> tuple[str, str, str]:
 def get_resolver(mod: u.BaseMod, inst: u.BaseMod | None = None) -> SvExprResolver:
     """Get SvExprResolver for `mod`."""
     if inst is not None:
-        return SvExprResolver(namespace=mod.namespace, remap=inst.params)
+        return SvExprResolver(namespace=mod.namespace, remap=inst.params + inst.consts)
     return SvExprResolver(namespace=mod.namespace)
